@@ -130,6 +130,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     uid = event.get_user_id()   # 获取用户id, 类型为str
     rankdata = sorted(userdata.items(),
                       key=lambda x: x[1], reverse=True)   # 排序
+    if len(rankdata) < 5:
+        await JJrank.finish("目前记录的数据量小于5, 无法显示rank喵")
     top5 = rankdata[:5]    # 取前5
     last5 = rankdata[-5:]   # 取后5
     index = [i for i, x in enumerate(rankdata) if x[0] == uid]  # 获取用户排名
