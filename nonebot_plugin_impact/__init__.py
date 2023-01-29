@@ -1,25 +1,34 @@
 from random import choice
 from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11 import Bot, MessageSegment
-
+from nonebot.permission import SUPERUSER
+from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
+from re import I
+from nonebot.typing import T_State
 from .utils import *
 from .txt2img import txt_to_img
 
-suo = on_command("嗦牛子", priority=5)
-dajiao = on_regex("^(打胶|开导)$", priority=5)
-pk = on_command("pk", aliases={"对决"}, rule=rule, priority=5)
-queryJJ = on_command("查询", priority=5)
-JJrank = on_command("jj排行榜", aliases={"jj排名", "jj榜单", "jjrank"}, priority=5)
+suo = on_command("嗦牛子", priority=20)
+dajiao = on_regex("^(打胶|开导)$", priority=20)
+pk = on_command("pk", aliases={"对决"}, rule=rule, priority=20)
+queryJJ = on_command("查询", priority=20)
+JJrank = on_command("jj排行榜", aliases={"jj排名", "jj榜单", "jjrank"}, priority=20)
+openmodule = on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER |
+                      GROUP_ADMIN | GROUP_OWNER, flags=I, priority=20, block=True)
 
 
 @pk.handle()
 async def _(event: GroupMessageEvent):
+    if not (await check_group_allow(str(event.group_id))):
+        await pk.finish(notAllow, at_sender=True)
     uid = event.get_user_id()  # 获取用户id, 类型为str
     allow = await PK_CD_check(uid)     # CD是否允许pk
     if not allow:       # 如果不允许pk, 则返回
         await pk.finish(f"你已经pk不动了喵, 请等待{round(pkCDTime-(time.time() - pkCDData[uid]),3)}秒后再pk喵", at_sender=True)
     pkCDData.update({uid: time.time()})    # 更新CD时间
     at = await get_at(event)            # 获取at的id, 类型为str
+    if at == uid:   # 如果at的id和uid相同, 则返回
+        await pk.finish("你不能pk自己喵", at_sender=True)
     # rule规定了必须有at, 所以不用判断at是否为寄
     if uid in userdata and at in userdata:  # 如果两个都在userdata里面
         random_num = random.random()    # 生成一个随机数
@@ -53,6 +62,8 @@ async def _(event: GroupMessageEvent):
 
 @dajiao.handle()
 async def _(event: GroupMessageEvent):
+    if not (await check_group_allow(str(event.group_id))):
+        await dajiao.finish(notAllow, at_sender=True)
     uid = event.get_user_id()   # 获取用户id, 类型为str
     allow = await CD_check(uid)    # CD是否允许打胶
     if not allow:   # 如果不允许打胶, 则返回
@@ -73,6 +84,8 @@ async def _(event: GroupMessageEvent):
 
 @suo.handle()
 async def _(event: GroupMessageEvent):
+    if not (await check_group_allow(str(event.group_id))):
+        await suo.finish(notAllow, at_sender=True)
     uid = event.get_user_id()   # 获取用户id, 类型为str
     allow = await suo_CD_check(uid)   # CD是否允许嗦
     if not allow:   # 如果不允许嗦, 则返回
@@ -107,6 +120,8 @@ async def _(event: GroupMessageEvent):
 
 @queryJJ.handle()
 async def _(event: GroupMessageEvent):
+    if not (await check_group_allow(str(event.group_id))):
+        await queryJJ.finish(notAllow, at_sender=True)
     uid = event.get_user_id()   # 获取用户id, 类型为str
     at = await get_at(event)    # 获取at的用户id, 类型为str
     if at == "寄":  # 如果没有at
@@ -127,6 +142,8 @@ async def _(event: GroupMessageEvent):
 
 @JJrank.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
+    if not (await check_group_allow(str(event.group_id))):
+        await JJrank.finish(notAllow, at_sender=True)
     uid = event.get_user_id()   # 获取用户id, 类型为str
     rankdata = sorted(userdata.items(),
                       key=lambda x: x[1], reverse=True)   # 排序
@@ -151,3 +168,33 @@ async def _(bot: Bot, event: GroupMessageEvent):
         top5txt+".................................\n"*3+last5txt)    # 生成图片
     reply2 = f"你的排名为{index[0]+1}喵"
     await JJrank.finish(reply+MessageSegment.image(imgBytes)+reply2, at_sender=True)
+
+
+@openmodule.handle()
+async def _(event: GroupMessageEvent, state: T_State):
+    gid = str(event.group_id)  # 群号
+    # 获取用户输入的参数
+    args = list(state["_matched_groups"])
+    command = args[0]
+    if "开启淫趴" in command:
+        if gid in groupdata:
+            groupdata[gid]["allow"] = True
+            wirte_group_data()
+            await openmodule.finish("功能已开启喵")
+        else:
+            groupdata.update({gid: {"allow": True}})
+            wirte_group_data()
+            await openmodule.finish("功能已开启喵")
+    elif "禁止淫趴" in command:
+        if gid in groupdata:
+            groupdata[gid]["allow"] = False
+            wirte_group_data()
+            await openmodule.finish("功能已禁用喵")
+        else:
+            groupdata.update({gid: {"allow": False}})
+            wirte_group_data()
+            await openmodule.finish("功能已禁用喵")
+
+
+
+
