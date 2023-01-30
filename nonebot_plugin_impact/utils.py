@@ -18,7 +18,7 @@ else:   # 不存在则创建
 
 # 读取群配置
 if os.path.exists("data/impact/groupdata.json"):  # 读取用户数据
-    with open("ata/impact/groupdata.json", "r", encoding="utf-8") as f:
+    with open("data/impact/groupdata.json", "r", encoding="utf-8") as f:
         groupdata = json.load(f)
 else:   # 不存在则创建
     if not os.path.exists("data/impact"):
