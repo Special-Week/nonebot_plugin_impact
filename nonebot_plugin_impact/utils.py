@@ -3,7 +3,7 @@ import json
 import time
 import random
 import nonebot
-from nonebot.adapters.onebot.v11 import GroupMessageEvent
+from nonebot.adapters.onebot.v11 import GroupMessageEvent,Bot
 
 
 # 读取用户数据
@@ -64,6 +64,12 @@ async def suo_CD_check(uid: str) -> bool:
     cd = time.time() - suoCDData[uid] if uid in suoCDData else suoCDTime+1
     return True if cd > suoCDTime else False
 
+async def fuck_CD_check(uid:str)->bool:
+    """透群友检查"""
+    cd = time.time() - \
+        ejaculation_CD[uid] if uid in ejaculation_CD else fuckCDTime+1
+    return True if cd > fuckCDTime else False
+
 
 async def check_group_allow(gid: str) -> bool:
     """检查群是否允许"""
@@ -73,7 +79,7 @@ async def check_group_allow(gid: str) -> bool:
         return False
 
 
-def wirte_data() -> None:
+def write_data() -> None:
     """写入用户数据"""
     with open("data/impact/userdata.json", "w", encoding="utf-8") as f:
         json.dump(userdata, f, indent=4)
@@ -86,10 +92,19 @@ def get_random_num():
     return round(rand_num, 3)
 
 
-def wirte_group_data() -> None:
+def write_group_data() -> None:
     """写入群配置"""
     with open("data/impact/groupdata.json", "w", encoding="utf-8") as f:
         json.dump(groupdata, f, indent=4)
+
+
+async def get_user_card(bot: Bot, group_id, qid):
+    """返还用户nickname"""
+    user_info: dict = await bot.get_group_member_info(group_id=group_id, user_id=qid)
+    user_card = user_info["card"]
+    if not user_card:
+        user_card = user_info["nickname"]
+    return user_card
 
 
 notAllow = "群内还未开启淫趴游戏, 请管理员或群主发送\"开启淫趴\", \"禁止淫趴\"以开启/关闭该功能"
@@ -97,11 +112,9 @@ JJvariable = ["牛子", "牛牛", "丁丁", "JJ"]     # JJ变量
 cdData = {}  # 冷却数据
 pkCDData = {}   # pk冷却数据
 suoCDData = {}  # 嗦牛子冷却数据
+ejaculation_CD = {}  # 射精CD
 config = nonebot.get_driver().config       # 获取配置
 djCDtime:int = getattr(config, "djcdtime", 300)     # 打胶冷却时间
 pkCDTime:int = getattr(config, "pkcdtime", 60)     # pk冷却时间
 suoCDTime: int = getattr(config, "suocdtime", 300)     # 嗦牛子冷却时间
-
-print(djCDtime)
-print(pkCDTime)
-print(suoCDTime)
+fuckCDTime: int = getattr(config, "fuckcdtime", 3600)     # 透群友冷却时间
