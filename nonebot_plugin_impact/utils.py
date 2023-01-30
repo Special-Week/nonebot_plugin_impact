@@ -17,7 +17,7 @@ else:   # 不存在则创建
     with open("data/impact/userdata.json", "w", encoding="utf-8") as f:
         json.dump(userdata, f, indent=4)
 
-# 读取群配置
+# 读取群配置, 可能有人要问了, 为什么要搞两个json, 因为我自己的bot上个数据有多个用户数据, 我懒得合并了
 if os.path.exists("data/impact/groupdata.json"):  # 读取用户数据
     with open("data/impact/groupdata.json", "r", encoding="utf-8") as f:
         groupdata = json.load(f)
