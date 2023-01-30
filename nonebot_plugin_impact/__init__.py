@@ -177,23 +177,24 @@ async def _(bot: Bot, event: GroupMessageEvent):
 @yinPa.handle()
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     gid = event.group_id  # 群号
-    uid = event.user_id   # 获取用户id, 类型为str
+    uid = event.user_id   # 获取用户id, 类型为int
     if not (await check_group_allow(str(gid))):
         await JJrank.finish(notAllow, at_sender=True)
     allow = await fuck_CD_check(str(uid))  # CD检查是否允许
     if not allow:
-        await yinPa.finish(f"你已经榨不出来任何东西了, 请先休息{round(fuckCDTime-(time.time() - ejaculation_CD[uid]),3)}秒", at_sender=True)
-    ejaculation_CD.update({uid: time.time()})  # 记录时间
-    req_user_card = await get_user_card(bot, gid,uid)      # 请求者的昵称 
+        await yinPa.finish(f"你已经榨不出来任何东西了, 请先休息{round(fuckCDTime-(time.time() - ejaculation_CD[str(uid)]),3)}秒", at_sender=True)
+    ejaculation_CD.update({str(uid): time.time()})  # 记录时间
+    # 请求者的昵称
+    req_user_card = await get_user_card(bot, group_id=int(gid), qid=int(uid))
     # 获取用户输入的参数
     args = list(state["_matched_groups"])
     command = args[0]
     # 获取群成员列表
-    prep_list = await bot.get_group_member_list(group_id=gid )
+    prep_list = await bot.get_group_member_list(group_id=gid)
     if "群友" in command:
         prep_list = [prep.get("user_id", 114514) for prep in prep_list]
         target = await get_at(event)
-        if target == None:
+        if target == "寄":
             # 随机抽取幸运成员
             prep_list.remove(uid)
             lucky_user = choice(prep_list)
@@ -206,6 +207,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
                 lucky_user = prep['user_id']
                 break
         if int(lucky_user) == uid:
+            del ejaculation_CD[str(uid)]
             await yinPa.finish("你透你自己?")
         await yinPa.send(f"现在咱将把群主\n送给{req_user_card}色色！")
     elif "管理" in command:
@@ -217,11 +219,12 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
         if uid in admin_id:
             admin_id.remove(uid)
         if admin_id == []:
+            del ejaculation_CD[str(uid)]
             await yinPa.finish("喵喵喵? 找不到群管理!")
         lucky_user = choice(admin_id)
         await yinPa.send(f"现在咱将随机抽取一位幸运管理\n送给{req_user_card}色色！")
-    lucky_user_card = await get_user_card(bot, gid, lucky_user)
-    await asyncio.sleep(3)  # 休眠3秒, 延迟三秒更有戏剧性
+    lucky_user_card = await get_user_card(bot, gid, int(lucky_user))
+    await asyncio.sleep(2)  # 休眠2秒, 更有效果
     url = f"http://q1.qlogo.cn/g?b=qq&nk={lucky_user}&s=640"
     repo_1 = f"好欸！{req_user_card}({uid})用时{random.randint(1, 20)}秒 \n给 {lucky_user_card}({lucky_user}) 注入了{round(random.uniform(1, 100),3)}毫升的脱氧核糖核酸"
     await yinPa.send(repo_1 + MessageSegment.image(url))
