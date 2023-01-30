@@ -98,7 +98,10 @@ cdData = {}  # 冷却数据
 pkCDData = {}   # pk冷却数据
 suoCDData = {}  # 嗦牛子冷却数据
 config = nonebot.get_driver().config       # 获取配置
-djCDtime:int = getattr(config, "djCDtime", 300)     # 打胶冷却时间
-pkCDTime:int = getattr(config, "pkCDTime", 60)     # pk冷却时间
-suoCDTime: int = getattr(config, "suoCDTime", 300)     # 嗦牛子冷却时间
+djCDtime:int = getattr(config, "djcdtime", 300)     # 打胶冷却时间
+pkCDTime:int = getattr(config, "pkcdtime", 60)     # pk冷却时间
+suoCDTime: int = getattr(config, "suocdtime", 300)     # 嗦牛子冷却时间
 
+print(djCDtime)
+print(pkCDTime)
+print(suoCDTime)
