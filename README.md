@@ -38,4 +38,4 @@ openmodule = on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER | GR
 | pkCDTime       | int            |60         |pkCDTime = 60       |    pk的CD            |
 | suoCDTime      | int            |300        |suoCDTime = 300     |    嗦牛子的CD        |
 
-以上配置项单位均为秒
+以上配置项单位均为秒, 大小写不敏感(反正env里面拿到dict都是小写的key)
