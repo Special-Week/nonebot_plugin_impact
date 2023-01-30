@@ -30,3 +30,12 @@ openmodule = on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER | GR
 指令5: jj排行榜 | jj排名 | jj榜单 | jjrank (字面意思, 输出倒数五位和前五位, 以及自己的排名)
 
 指令6: 开启淫趴|禁止淫趴 (由管理员 | 群主 | SUPERUSERS开启或者关闭淫趴)
+
+### env配置项:
+|config          |type            |default    |example             |usage                |
+|----------------|----------------|-----------|--------------------|---------------------|
+| djCDtime       | int            |300        |djCDtime = 300      |    打胶的CD          |
+| pkCDTime       | int            |60         |pkCDTime = 60       |    pk的CD            |
+| suoCDTime      | int            |300        |suoCDTime = 300     |    嗦牛子的CD        |
+
+以上配置项单位均为秒

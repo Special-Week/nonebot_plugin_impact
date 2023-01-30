@@ -2,6 +2,7 @@ import os
 import json
 import time
 import random
+import nonebot
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
 
@@ -48,8 +49,8 @@ async def get_at(event: GroupMessageEvent) -> str:
 
 async def CD_check(uid: str) -> bool:
     """冷却检查"""
-    cd = time.time() - cdData[uid] if uid in cdData else CDtime+1
-    return True if cd > CDtime else False
+    cd = time.time() - cdData[uid] if uid in cdData else djCDtime+1
+    return True if cd > djCDtime else False
 
 
 async def PK_CD_check(uid: str) -> bool:
@@ -94,8 +95,10 @@ def wirte_group_data() -> None:
 notAllow = "群内还未开启淫趴游戏, 请管理员或群主发送\"开启淫趴\", \"禁止淫趴\"以开启/关闭该功能"
 JJvariable = ["牛子", "牛牛", "丁丁", "JJ"]     # JJ变量
 cdData = {}  # 冷却数据
-CDtime = 300  # 冷却时间
 pkCDData = {}   # pk冷却数据
-pkCDTime = 60  # pk冷却时间
 suoCDData = {}  # 嗦牛子冷却数据
-suoCDTime = 300  # 嗦牛子冷却时间
+config = nonebot.get_driver()       # 获取配置
+djCDtime:int = getattr(config, "djCDtime", 300)     # 打胶冷却时间
+pkCDTime:int = getattr(config, "pkCDTime", 60)     # pk冷却时间
+suoCDTime: int = getattr(config, "suoCDTime", 300)     # 嗦牛子冷却时间
+

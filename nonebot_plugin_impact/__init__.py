@@ -33,7 +33,7 @@ async def _(event: GroupMessageEvent):
     # rule规定了必须有at, 所以不用判断at是否为寄
     if uid in userdata and at in userdata:  # 如果两个都在userdata里面
         random_num = random.random()    # 生成一个随机数
-        # 如果random_num大于0.5, 则uid赢
+        # 如果random_num大于0.5, 则胜利, 否则失败
         if random_num > 0.5:
             random_num = get_random_num()  # 重新生成一个随机数
             userdata.update(
@@ -68,7 +68,7 @@ async def _(event: GroupMessageEvent):
     uid = event.get_user_id()   # 获取用户id, 类型为str
     allow = await CD_check(uid)    # CD是否允许打胶
     if not allow:   # 如果不允许打胶, 则返回
-        await dajiao.finish(f"你已经打不动了喵, 请等待{round(CDtime-(time.time() - cdData[uid]),3)}秒后再打喵", at_sender=True)
+        await dajiao.finish(f"你已经打不动了喵, 请等待{round(djCDtime-(time.time() - cdData[uid]),3)}秒后再打喵", at_sender=True)
     cdData.update({uid: time.time()})    # 更新CD时间
     if uid in userdata:    # 如果在userdata里面
         random_num = get_random_num()    # 生成一个随机数
