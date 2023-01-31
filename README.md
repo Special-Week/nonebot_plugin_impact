@@ -20,7 +20,15 @@ openmodule = on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER | GR
 yinPa = on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理)", flags=I, priority=20, block=True)
 ```
 
-注意:使用on_command的响应器, 指令需要带上自己env的COMMAND_START, 默认为"/"
+注意:
+
+使用on_command的响应器, 指令需要带上自己env的COMMAND_START, 默认为"/"
+
+jjrank采取的是输出图片的形式发送的, 如果这个功能用的时候报错, 那么我猜测你的Linux没有simsun.ttc(宋体)这个字体
+
+解决方案: 源码内txtToImg.py中函数txt_to_img第三个参数font_path的值, 换成你系统有的字体, 或者安装simsun.ttc这个字体
+
+
 
 指令1: 嗦牛子 (给目标牛牛增加长度, 自己或者他人, 通过艾特选择对象, 没有at时目标是自己)
 
