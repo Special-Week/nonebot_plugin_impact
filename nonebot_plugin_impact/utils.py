@@ -14,9 +14,7 @@ else:   # 不存在则创建
     if not os.path.exists("data/impact"):
         os.makedirs("data/impact")  # 创建文件夹
     userdata = {}
-    with open("data/impact/userdata.json", "w", encoding="utf-8") as f:
-        json.dump(userdata, f, indent=4)
-
+#此处不需要打开，删掉多余
 # 读取群配置, 可能有人要问了, 为什么要搞两个json, 因为我自己的bot上个数据有多个用户数据, 我懒得合并了
 if os.path.exists("data/impact/groupdata.json"):  # 读取用户数据
     with open("data/impact/groupdata.json", "r", encoding="utf-8") as f:
@@ -25,9 +23,6 @@ else:   # 不存在则创建
     if not os.path.exists("data/impact"):
         os.makedirs("data/impact")  # 创建文件夹
     groupdata = {}
-    with open("data/impact/groupdata.json", "w", encoding="utf-8") as f:
-        json.dump(groupdata, f, indent=4)
-
 
 async def rule(event: GroupMessageEvent) -> bool:
     """rule检查, 是否有at"""
@@ -72,11 +67,10 @@ async def fuck_CD_check(uid:str)->bool:
 
 
 async def check_group_allow(gid: str) -> bool:
-    """检查群是否允许"""
-    if gid in groupdata:
-        return groupdata[gid]["allow"]
-    else:
-        return False
+    #检查群是否允许
+    if gid not in groupdata:
+        groupdata[gid] = {"allow": True}# 写入默认值为true
+    return groupdata[gid]["allow"]
 
 
 def write_data() -> None:
@@ -107,7 +101,7 @@ async def get_user_card(bot: Bot, group_id, qid):
     return user_card
 
 
-notAllow = "群内还未开启淫趴游戏, 请管理员或群主发送\"开启淫趴\", \"禁止淫趴\"以开启/关闭该功能"
+notAllow = "群内还未开启淫趴游戏, 请管理员或群主发送\"开启淫趴\", \"关闭淫趴\"以开启/关闭该功能"
 JJvariable = ["牛子", "牛牛", "丁丁", "JJ"]     # JJ变量
 cdData = {}  # 冷却数据
 pkCDData = {}   # pk冷却数据
