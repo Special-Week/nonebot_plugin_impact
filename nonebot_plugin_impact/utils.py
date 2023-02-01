@@ -34,6 +34,8 @@ async def rule(event: GroupMessageEvent) -> bool:
     msg = event.get_message()
     for msg_seg in msg:
         if msg_seg.type == "at":
+            if msg_seg.data["qq"] == "all":
+                return False
             return True
     return False
 
@@ -43,6 +45,8 @@ async def get_at(event: GroupMessageEvent) -> str:
     msg = event.get_message()
     for msg_seg in msg:
         if msg_seg.type == "at":
+            if msg_seg.data["qq"] == "all":
+                return "寄"
             return str(msg_seg.data["qq"])
     return "寄"
 
