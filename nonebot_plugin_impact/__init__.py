@@ -245,7 +245,7 @@ async def _(event: GroupMessageEvent, state: T_State):
             groupdata.update({gid: {"allow": True}})
             write_group_data()
             await openmodule.finish("功能已开启喵")
-    elif "禁止淫趴" in command:
+    elif "关闭淫趴" in command:
         if gid in groupdata:
             groupdata[gid]["allow"] = False
             write_group_data()
