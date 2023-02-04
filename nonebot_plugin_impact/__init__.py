@@ -258,7 +258,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         except:
             await queryinjection.finish(f"{replay1}历史总被注射量为0ml")
         pic_string: str = ""            # 文字， 准备弄成图片
-        for key in date:                # 遍历所有的力气
+        for key in date:                # 遍历所有的日期
             temp = date[key]["ejaculation"]
             ejaculation += temp             # 注入量求和
             pic_string += f"{key}\t\t{temp}\n"
