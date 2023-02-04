@@ -230,7 +230,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     try:
         temp = ejaculation_data[str(
             lucky_user)][get_today()]["ejaculation"] + ejaculation
-        await update_ejaculation(temp, lucky_user)
+        await update_ejaculation(round(temp,3), lucky_user)
     except:
         await update_ejaculation(ejaculation, lucky_user)
     await asyncio.sleep(2)  # 休眠2秒, 更有效果
