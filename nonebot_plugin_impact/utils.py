@@ -33,8 +33,14 @@ else:   # 不存在则创建
         os.makedirs("data/impact")  # 创建文件夹
     userdata = {}
     write_user_data()
+# json结构
+# {
+#     "user_id":int
+# }
 
-# 读取群配置, 可能有人要问了, 为什么要搞两个json, 因为我自己的bot上个数据有多个用户数据, 我懒得合并了
+
+
+# 读取群配置, 可能有人要问了, 为什么要搞这么多个json, 因为我自己的bot上个数据有多个用户数据, 我懒得合并了
 if os.path.exists("data/impact/groupdata.json"):  # 读取用户数据
     with open("data/impact/groupdata.json", "r", encoding="utf-8") as f:
         groupdata = json.load(f)
@@ -43,6 +49,13 @@ else:   # 不存在则创建
         os.makedirs("data/impact")  # 创建文件夹
     groupdata = {}
     write_group_data()
+# json结构
+# {
+#     "group_id": {
+#         "allow": true|false
+#     }
+# }
+
 
 # 读取用户被精液注入的量, 重构上面的json好麻烦, 新建一个json
 if os.path.exists("data/impact/ejaculation_data.json"):  # 读取数据
@@ -53,7 +66,7 @@ else:  # 不存在就创建
         os.makedirs("data/impact")  # 创建文件夹
     ejaculation_data = {}
     write_ejaculation_data()
-# 这种结构, 下次咱不会再加json了
+# 这种结构, 不想重构也不想新建json了， 所以放宽了这么多
 # {
 #     "user_id": {
 #         "date": {
@@ -138,14 +151,15 @@ async def update_ejaculation(ejaculation: float, lucky_user: str) -> None:
 
 
 def get_today_ejaculation(user_id: str) -> float:
+    """获取当日注入的量"""
     try:
-        return ejaculation_data[str(user_id)][get_today()]["ejaculation"]
+        return ejaculation_data[str(user_id)][get_today()]["ejaculation"]  # 尝试获取, json没有的话就返回0
     except:
         return 0
 
 
 def get_random_num() -> float:
-    """获取随机数"""
+    """获取随机数 0.1的概率是1-2随机获取, 剩下0.9是0-1"""
     rand_num = random.random()
     rand_num = random.uniform(0, 1) if rand_num > 0.1 else random.uniform(1, 2)
     return round(rand_num, 3)
@@ -160,7 +174,7 @@ async def get_user_card(bot: Bot, group_id, qid) -> str:
     return user_card
 
 
-notAllow = "群内还未开启淫趴游戏, 请管理员或群主发送\"开启淫趴\", \"禁止淫趴\"以开启/关闭该功能"
+notAllow = "群内还未开启淫趴游戏, 请管理员或群主发送\"开启淫趴\", \"禁止淫趴\"以开启/关闭该功能"  # 未开启该功能的send信息
 JJvariable = ["牛子", "牛牛", "丁丁", "JJ"]     # JJ变量
 cdData = {}  # 冷却数据
 pkCDData = {}   # pk冷却数据
