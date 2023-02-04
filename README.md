@@ -20,12 +20,13 @@ queryJJ = on_command("查询", priority=5)
 JJrank = on_command("jj排行榜", aliases={"jj排名", "jj榜单", "jjrank"}, priority=5)
 openmodule = on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, flags=I, priority=20, block=True)
 yinPa = on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理)", flags=I, priority=20, block=True)
+queryinjection = on_command("注入查询",aliases={"摄入查询","射入查询"}, priority=20)
 ```
 
 ### 注意:
 
     使用on_command的响应器, 指令需要带上自己env的COMMAND_START, 默认为"/"
-    jjrank采取的是输出图片的形式发送的, 如果这个功能用的时候报错, 那么我猜测你的Linux没有simsun.ttc(宋体)这个字体
+    jjrank与注入查询全部采取的是输出图片的形式发送的, 如果这个功能用的时候报错, 那么我猜测你的Linux没有simsun.ttc(宋体)这个字体
     解决方案: 源码内txtToImg.py中函数txt_to_img第三个参数font_path的值, 换成你系统有的字体, 或者安装simsun.ttc这个字体
 
 
@@ -45,6 +46,8 @@ yinPa = on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理
 指令6: 开启淫趴|禁止淫趴 (由管理员 | 群主 | SUPERUSERS开启或者关闭淫趴)
 
 指令7: 日群友|透群友|日群主|透群主|日管理|透管理  (字面意思, 当使用透群友的时候如果at了人那么直接指定)
+
+指令8: 注入查询 | 摄入查询 (查询目标被透注入的量，后接(历史|全部), 可查看总被摄入的量, 无艾特的时候是自己, 有at的时候是目标)
 
 ### env配置项:
 | config     | type | default | example           | usage      |
