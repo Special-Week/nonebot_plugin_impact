@@ -140,13 +140,21 @@ def get_today() -> str:
 
 async def update_ejaculation(ejaculation: float, lucky_user: str) -> None:
     """更新ejaculation_data数据并且写入json"""
-    ejaculation_data.update({
-        str(lucky_user): {
+    if lucky_user in ejaculation_data:
+        target_dict = ejaculation_data[lucky_user]
+        target_dict.update({
             get_today(): {
                 "ejaculation": ejaculation
             }
+        })
+        ejaculation_data[lucky_user].update(target_dict)
+    else:
+        target_dict = {str(lucky_user): {
+            get_today(): {
+                "ejaculation": ejaculation
+            }}
         }
-    })
+        ejaculation_data.update(target_dict)
     write_ejaculation_data()
 
 
