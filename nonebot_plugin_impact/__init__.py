@@ -300,5 +300,4 @@ async def _(event: GroupMessageEvent, state: T_State):
 
 @yinpaIntroduce.handle()
 async def _(event:GroupMessageEvent):
-    global __usage__
-    await yinpaIntroduce.send(MessageSegment.image(txt_to_img(__usage__)))
+    await yinpaIntroduce.send(MessageSegment.image(await plugin_usage()))

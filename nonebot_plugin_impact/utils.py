@@ -3,6 +3,7 @@ import json
 import time
 import random
 import nonebot
+from .txt2img import txt_to_img
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
 
 
@@ -180,6 +181,9 @@ async def get_user_card(bot: Bot, group_id, qid) -> str:
     if not user_card:
         user_card = user_info["nickname"]
     return user_card
+
+async def plugin_usage():
+    return txt_to_img(__usage__)
 
 
 notAllow = "群内还未开启淫趴游戏, 请管理员或群主发送\"开启淫趴\", \"禁止淫趴\"以开启/关闭该功能"  # 未开启该功能的send信息
