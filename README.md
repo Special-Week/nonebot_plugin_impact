@@ -12,14 +12,15 @@
 响应器如下
 
 ```python
-suo = on_command("嗦牛子", priority=5)
-dajiao = on_regex("^(打胶|开导)$", priority=5)
-pk = on_command("pk", aliases={"对决"}, rule=rule, priority=5)
-queryJJ = on_command("查询", priority=5)
-JJrank = on_command("jj排行榜", aliases={"jj排名", "jj榜单", "jjrank"}, priority=5)
+suo = on_command("嗦牛子", priority=20, block=True)
+dajiao = on_regex("^(打胶|开导)$", priority=20, block=True)
+pk = on_command("pk", aliases={"对决"}, rule=rule, priority=20, block=False)
+queryJJ = on_command("查询", priority=20, block=False)
+JJrank = on_command("jj排行榜", aliases={"jj排名", "jj榜单", "jjrank"}, priority=20, block=True)
 openmodule = on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, flags=I, priority=20, block=True)
 yinPa = on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理)", flags=I, priority=20, block=True)
-queryinjection = on_command("注入查询",aliases={"摄入查询","射入查询"}, priority=20)
+queryinjection = on_command("注入查询", aliases={"摄入查询", "射入查询"}, priority=20, block=True)
+yinpaIntroduce = on_command("淫趴介绍", priority=20, block=True)
 ```
 
 ### 注意:
@@ -48,6 +49,8 @@ queryinjection = on_command("注入查询",aliases={"摄入查询","射入查询
 指令7: 日群友|透群友|日群主|透群主|日管理|透管理  (字面意思, 当使用透群友的时候如果at了人那么直接指定)
 
 指令8: 注入查询 | 摄入查询 (查询目标被透注入的量，后接(历史|全部), 可查看总被摄入的量, 无艾特的时候是自己, 有at的时候是目标)
+
+指令9: 淫趴介绍 | 淫趴说明| 淫趴帮助 (输出淫趴插件的命令列表)
 
 ### env配置项:
 | config     | type | default | example           | usage      |

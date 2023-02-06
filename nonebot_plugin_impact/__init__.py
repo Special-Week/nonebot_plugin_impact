@@ -23,6 +23,7 @@ yinPa = on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理
                  flags=I, priority=20, block=True)
 queryinjection = on_command(
     "注入查询", aliases={"摄入查询", "射入查询"}, priority=20, block=True)
+yinpaIntroduce = on_command("淫趴介绍", priority=20, block=True)
 
 
 @pk.handle()
@@ -235,9 +236,9 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     try:                                # 尝试直接写入json， 如果没有说明用户不在， 在except里面json里面新建
         temp = ejaculation_data[str(
             lucky_user)][get_today()]["ejaculation"] + ejaculation      # 相加
-        await update_ejaculation(round(temp, 3), lucky_user)     # 更新
+        await update_ejaculation(round(temp, 3), str(lucky_user))     # 更新
     except:
-        await update_ejaculation(ejaculation, lucky_user)  # 更新
+        await update_ejaculation(ejaculation, str(lucky_user))  # 更新
     await asyncio.sleep(2)  # 休眠2秒, 更有效果
     # 准备调用api, 用来获取头像椭偏
     url = f"http://q1.qlogo.cn/g?b=qq&nk={lucky_user}&s=640"
@@ -295,3 +296,9 @@ async def _(event: GroupMessageEvent, state: T_State):
             groupdata.update({gid: {"allow": False}})
             write_group_data()
             await openmodule.finish("功能已禁用喵")
+
+
+@yinpaIntroduce.handle()
+async def _(event:GroupMessageEvent):
+    global __usage__
+    await yinpaIntroduce.send(MessageSegment.image(txt_to_img(__usage__)))
