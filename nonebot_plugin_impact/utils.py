@@ -147,7 +147,7 @@ async def update_ejaculation(ejaculation: float, lucky_user: str) -> None:
                 "ejaculation": ejaculation
             }
         })
-        ejaculation_data[lucky_user].update(target_dict)
+        ejaculation_data.update({str(lucky_user):target_dict})
     else:
         target_dict = {str(lucky_user): {
             get_today(): {
