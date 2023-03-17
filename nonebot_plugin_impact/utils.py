@@ -70,6 +70,7 @@ else:  # 不存在就创建
 # 这种结构, 不想重构也不想新建json了， 所以放宽了这么多
 # {
 #     "user_id": {
+#         "total": 123,
 #         "date": {
 #             "ejaculation": 123
 #         }
@@ -143,16 +144,25 @@ async def update_ejaculation(ejaculation: float, lucky_user: str) -> None:
     """更新ejaculation_data数据并且写入json"""
     if lucky_user in ejaculation_data:
         target_dict = ejaculation_data[lucky_user]
+        if get_today() in target_dict:
+            today = round(ejaculation_data[str(lucky_user)][get_today()]["ejaculation"] + ejaculation, 3)
+        else:
+            today = ejaculation
+        total = round(ejaculation_data[str(lucky_user)]["total"] + ejaculation, 3)
         target_dict.update({
+            "total": total,
             get_today(): {
-                "ejaculation": ejaculation
+                "ejaculation": today
             }
         })
-        ejaculation_data.update({str(lucky_user):target_dict})
+        ejaculation_data.update({str(lucky_user): target_dict})
     else:
+        today = ejaculation
+        total = ejaculation
         target_dict = {str(lucky_user): {
+            "total": total,
             get_today(): {
-                "ejaculation": ejaculation
+                "ejaculation": today
             }}
         }
         ejaculation_data.update(target_dict)
@@ -186,7 +196,7 @@ async def plugin_usage():
     return txt_to_img(__usage__)
 
 
-notAllow = "群内还未开启淫趴游戏, 请管理员或群主发送\"开启淫趴\", \"禁止淫趴\"以开启/关闭该功能"  # 未开启该功能的send信息
+notAllow = "群内还未开启银趴游戏, 请管理员或群主发送\"/开启银趴\"以开启该功能"  # 未开启该功能的send信息
 JJvariable = ["牛子", "牛牛", "丁丁", "JJ"]     # JJ变量
 cdData = {}  # 冷却数据
 pkCDData = {}   # pk冷却数据
@@ -203,8 +213,9 @@ __usage__ = """指令1: 嗦牛子 (给目标牛牛增加长度, 自己或者他�
 指令2: 打胶 | 开导 (给自己牛牛增加长度)
 指令3: pk | 对决 (普通的pk,单纯的random实现输赢, 胜利方获取败方随机数/2的牛牛长度)
 指令4: 查询 (目标牛牛长度, 自己或者他人, 通过艾特选择对象, 没有at时目标是自己)
-指令5: jj排行榜 | jj排名 | jj榜单 | jjrank (字面意思, 输出倒数五位和前五位, 以及自己的排名)
-指令6: 开启淫趴|禁止淫趴 (由管理员 | 群主 | SUPERUSERS开启或者关闭淫趴)
-指令7: 日群友|透群友|日群主|透群主|日管理|透管理  (字面意思, 当使用透群友的时候如果at了人那么直接指定)
+指令5: jj排行榜 | jj排名 | jj榜单 | jjrank (字面意思, 输出前十位, 以及自己的排名)
+指令6: 开启银趴|禁止银趴 (由管理员 | 群主 | SUPERUSERS开启或者关闭银趴)
+指令7: 日群友|透群友|日群主|透群主|日管理|透管理  (字面意思, 当使用透群友的时候如果at了人那么直接指定，前面加上被就是自己被日)
 指令8: 注入查询 | 摄入查询 (查询目标被透注入的量，后接(历史|全部), 可查看总被摄入的量, 无艾特的时候是自己, 有at的时候是目标)
-指令9: 淫趴介绍 | 淫趴说明| 淫趴帮助 (输出淫趴插件的命令列表)"""
+指令9: 雌堕排名 | 雌堕榜单 | 雌堕排行榜 | rbqrank (输出前十被透注入和自己的排名)
+指令10: 银趴介绍 | 银趴说明| 银趴帮助 (输出银趴插件的命令列表)"""
