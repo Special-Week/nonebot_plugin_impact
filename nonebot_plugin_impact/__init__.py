@@ -23,6 +23,7 @@ yinPa = on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理
                  flags=I, priority=20, block=True)
 queryinjection = on_command(
     "注入查询", aliases={"摄入查询", "射入查询"}, priority=20, block=True)
+quityinpa = on_command("退出淫趴", priority=20, block=True)
 yinpaIntroduce = on_command("淫趴介绍", priority=20, block=True)
 
 
@@ -296,6 +297,20 @@ async def _(event: GroupMessageEvent, state: T_State):
             groupdata.update({gid: {"allow": False}})
             write_group_data()
             await openmodule.finish("功能已禁用喵")
+
+
+@quityinpa.handle()
+async def _(event: GroupMessageEvent):
+    if not (await check_group_allow(str(event.group_id))):
+        await suo.finish(notAllow, at_sender=True)
+    uid = event.get_user_id()     # 获取用户id, 类型为str
+    if uid in userdata:           # 如果在userdata里面
+        del userdata[uid]         # 删除数据
+        write_user_data()         # 写入文件
+    if uid in ejaculation_data:   # 如果在ejaculation_data里面
+        del ejaculation_data[uid] # 删除数据
+        write_ejaculation_data()  # 写入文件
+    await quityinpa.finish("已删除你的 impart 数据喵")
 
 
 @yinpaIntroduce.handle()

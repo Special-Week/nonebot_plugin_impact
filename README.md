@@ -20,6 +20,7 @@ JJrank = on_command("jj排行榜", aliases={"jj排名", "jj榜单", "jjrank"}, p
 openmodule = on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, flags=I, priority=20, block=True)
 yinPa = on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理)", flags=I, priority=20, block=True)
 queryinjection = on_command("注入查询", aliases={"摄入查询", "射入查询"}, priority=20, block=True)
+quityinpa = on_command("退出淫趴", priority=20, block=True)
 yinpaIntroduce = on_command("淫趴介绍", priority=20, block=True)
 ```
 
@@ -50,7 +51,9 @@ yinpaIntroduce = on_command("淫趴介绍", priority=20, block=True)
 
 指令8: 注入查询 | 摄入查询 (查询目标被透注入的量，后接(历史|全部), 可查看总被摄入的量, 无艾特的时候是自己, 有at的时候是目标)
 
-指令9: 淫趴介绍 | 淫趴说明| 淫趴帮助 (输出淫趴插件的命令列表)
+指令9: 退出淫趴 (删除自己的牛牛数据和被透注入的量数据)
+
+指令10: 淫趴介绍 | 淫趴说明 | 淫趴帮助 (输出淫趴插件的命令列表)
 
 ### env配置项:
 | config     | type | default | example           | usage      |
