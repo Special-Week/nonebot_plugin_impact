@@ -20,6 +20,7 @@ JJrank = on_command("jj排行榜", aliases={"jj排名", "jj榜单", "jjrank"}, p
 openmodule = on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, flags=I, priority=20, block=True)
 yinPa = on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理)", flags=I, priority=20, block=True)
 queryinjection = on_command("注入查询", aliases={"摄入查询", "射入查询"}, priority=20, block=True)
+quityinpa = on_command("退出淫趴", priority=20, block=True)
 yinpaIntroduce = on_command("淫趴介绍", priority=20, block=True)
 ```
 
