@@ -68,7 +68,6 @@ async def _(event: GroupMessageEvent):
         write_user_data()     # 写入文件
         del pkCDData[uid]   # 删除CD时间
         await pk.finish(f"你或对面还没有创建{choice(JJvariable)}喵, 咱全帮你创建了喵, 你们的{choice(JJvariable)}长度都是10cm喵", at_sender=True)
-        await pk.finish(f"你或对面还没有创建{choice(JJvariable)}喵, 咱只帮你创建了喵, 你的{choice(JJvariable)}长度是10cm喵", at_sender=True)
 
 
 @dajiao.handle()
