@@ -2,6 +2,7 @@ import asyncio
 import random
 import time
 from random import choice
+from typing import Tuple
 
 from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent, Message,
                                          MessageSegment)
@@ -15,6 +16,7 @@ from .utils import utils
 
 class Impart:
     def __init__(self) -> None:
+        """好像没什么东西要初始化的"""
         ...
 
 
@@ -22,11 +24,12 @@ class Impart:
         self,
         matcher: Matcher,
         event: GroupMessageEvent
-    ):
+    ) -> None:
+        """pk的响应器"""
         if not (await utils.check_group_allow(str(event.group_id))):
             await matcher.finish(utils.not_allow, at_sender=True)
-        uid = event.get_user_id()  # 获取用户id, 类型为str
-        allow = await utils.pkcd_check(uid)     # CD是否允许pk
+        uid: str = event.get_user_id()
+        allow: bool = await utils.pkcd_check(uid)     # CD是否允许pk
         if not allow:       # 如果不允许pk, 则返回
             await matcher.finish(f"你已经pk不动了喵, 请等待{round(utils.pk_cd_time-(time.time() - utils.pk_cd_data[uid]),3)}秒后再pk喵", at_sender=True)
         utils.pk_cd_data.update({uid: time.time()})    # 更新CD时间
@@ -38,7 +41,7 @@ class Impart:
             random_num = random.random()    # 生成一个随机数
             # 如果random_num大于0.5, 则胜利, 否则失败
             if random_num > 0.5:
-                random_num = utils.get_random_num()  # 重新生成一个随机数
+                random_num: float = utils.get_random_num()  # 重新生成一个随机数
                 utils.userdata.update(
                     {uid: round(utils.userdata[uid] + (random_num/2), 3)})  # 更新userdata
                 # 更新userdata
@@ -46,7 +49,7 @@ class Impart:
                 utils.write_user_data()    # 写入文件
                 await matcher.finish(f"对决胜利喵, 你的{choice(utils.jj_variable)}增加了{round(random_num/2,3)}cm喵, 对面则在你的阴影笼罩下减小了{random_num}cm喵", at_sender=True)
             else:
-                random_num = utils.get_random_num()    # 重新生成一个随机数
+                random_num: float = utils.get_random_num()    # 重新生成一个随机数
                 utils.userdata.update(
                     {uid: round(utils.userdata[uid] - random_num, 3)})  # 更新userdata
                 # 更新userdata
@@ -67,10 +70,11 @@ class Impart:
         self,
         matcher: Matcher,
         event: GroupMessageEvent
-    ):
+    ) -> None:
+        """打胶的响应器"""
         if not (await utils.check_group_allow(str(event.group_id))):
             await matcher.finish(utils.not_allow, at_sender=True)
-        uid = event.get_user_id()   # 获取用户id, 类型为str
+        uid: str = event.get_user_id()
         allow = await utils.cd_check(uid)    # CD是否允许打胶
         if not allow:   # 如果不允许打胶, 则返回
             await matcher.finish(f"你已经打不动了喵, 请等待{round(utils.dj_cd_time-(time.time() - utils.cd_data[uid]),3)}秒后再打喵", at_sender=True)
@@ -84,7 +88,7 @@ class Impart:
         else:
             utils.userdata.update({uid: 10})   # 创建用户
             utils.write_user_data()    # 写入文件
-            del utils.dj_cd_time[uid]     # 删除CD时间
+            del utils.cd_data[uid]     # 删除CD时间
             await matcher.finish(f"你还没有创建{choice(utils.jj_variable)}, 咱帮你创建了喵, 目前长度是10cm喵", at_sender=True)
                 
 
@@ -92,15 +96,16 @@ class Impart:
         self,
         matcher: Matcher,
         event: GroupMessageEvent
-    ):
+    ) -> None:
+        """嗦牛子的响应器"""
         if not (await utils.check_group_allow(str(event.group_id))):
             await matcher.finish(utils.not_allow, at_sender=True)
-        uid = event.get_user_id()   # 获取用户id, 类型为str
+        uid: str = event.get_user_id()
         allow = await utils.suo_cd_check(uid)   # CD是否允许嗦
         if not allow:   # 如果不允许嗦, 则返回
             await matcher.finish(f"你已经嗦不动了喵, 请等待{round(utils.suo_cd_time-(time.time() - utils.suo_cd_data[uid]),3)}秒后再嗦喵", at_sender=True)
         utils.suo_cd_data.update({uid: time.time()})    # 更新CD时间
-        at = await utils.get_at(event)    # 获取at的用户id, 类型为str
+        at: str = await utils.get_at(event)    # 获取at的用户id, 类型为str
         if at == "寄":  # 如果没有at
             if uid in utils.userdata:   # 如果在userdata里面
                 random_num = utils.get_random_num()    # 生成一个随机数
@@ -130,11 +135,12 @@ class Impart:
         self,
         matcher: Matcher,
         event: GroupMessageEvent
-    ):
+    ) -> None:
+        """查询某人jj的响应器"""
         if not (await utils.check_group_allow(str(event.group_id))):
             await matcher.finish(utils.not_allow, at_sender=True)
         uid = event.get_user_id()   # 获取用户id, 类型为str
-        at = await utils.get_at(event)    # 获取at的用户id, 类型为str
+        at: str = await utils.get_at(event)    # 获取at的用户id, 类型为str
         if at == "寄":  # 如果没有at
             if uid in utils.userdata:  # 如果在userdata里面
                 await matcher.finish(f"你的{choice(utils.jj_variable)}目前长度为{utils.userdata[uid]}cm喵", at_sender=True)
@@ -155,16 +161,17 @@ class Impart:
         bot: Bot, 
         matcher: Matcher,
         event: GroupMessageEvent
-    ):
+    ) -> None:
+        """输出前五后五和自己的排名"""
         if not (await utils.check_group_allow(str(event.group_id))):
             await matcher.finish(utils.not_allow, at_sender=True)
-        uid = event.get_user_id()   # 获取用户id, 类型为str
-        rankdata = sorted(utils.userdata.items(),
+        uid: str = event.get_user_id()
+        rankdata: list = sorted(utils.userdata.items(),
                         key=lambda x: x[1], reverse=True)   # 排序
         if len(rankdata) < 5:
             await matcher.finish("目前记录的数据量小于5, 无法显示rank喵")
-        top5 = rankdata[:5]    # 取前5
-        last5 = rankdata[-5:]   # 取后5
+        top5: list = rankdata[:5]    # 取前5
+        last5: list = rankdata[-5:]   # 取后5
         index = [i for i, x in enumerate(rankdata) if x[0] == uid]  # 获取用户排名
         if not index:   # 如果用户没有创建JJ
             utils.userdata.update({uid: 10})   # 创建用户
@@ -191,8 +198,9 @@ class Impart:
         state: T_State,
         matcher: Matcher,
         event: GroupMessageEvent,
-    ):
-        gid, uid = event.group_id, event.user_id
+    ) -> Tuple[int, int, str, str, list]:
+        """透群员的预处理环节"""
+        gid, uid  = event.group_id, event.user_id
         if not (await utils.check_group_allow(str(gid))):
             await matcher.finish(utils.not_allow, at_sender=True)
         allow = await utils.fuck_cd_check(event)  # CD检查是否允许
@@ -225,15 +233,15 @@ class Impart:
     
     async def yinpa_owner_handle(
         self,
-        uid,
-        prep_list,
-        req_user_card,
+        uid: int,
+        prep_list: list,
+        req_user_card: str,
         matcher: Matcher,
     ) -> str:
-        for prep in prep_list:  # 循环遍历群成员找到role是owner的角色，
-            if prep['role'] == 'owner':
-                lucky_user = prep['user_id']
-                break
+        lucky_user: str = next(
+            (prep['user_id'] for prep in prep_list if prep['role'] == 'owner'),
+            str(uid),
+        )
         if int(lucky_user) == uid:      # 如果群主是自己
             del utils.ejaculation_cd[str(uid)]
             await matcher.finish("你透你自己?")
@@ -243,12 +251,12 @@ class Impart:
 
     async def yinpa_admin_handle(
         self,
-        uid,
-        prep_list,
-        req_user_card,
+        uid: int,
+        prep_list: list,
+        req_user_card: str,
         matcher: Matcher,
     ) -> str:
-        admin_id = [prep['user_id'] for prep in prep_list if prep['role'] == 'admin']
+        admin_id: list = [prep['user_id'] for prep in prep_list if prep['role'] == 'admin']
         if uid in admin_id:         # 如果自己是管理的话， 移除自己
             admin_id.remove(uid)
         if not admin_id:          # 如果没有管理的话, del cd信息， 然后finish
@@ -260,20 +268,19 @@ class Impart:
 
     async def yinpa_identity_handle(
         self,
-        command,
-        prep_list,
-        req_user_card,
+        command: str,
+        prep_list: list,
+        req_user_card: str,
         matcher: Matcher,
         event: GroupMessageEvent,
     ) -> str:
-        uid = event.user_id
-        if "群友" in command:  # 如果发送的命令里面含有群友， 说明在透群友
-            lucky_user = await self.yinpa_member_handle(prep_list, req_user_card, matcher, event)
-        elif "群主" in command:  # 如果发送的命令里面含有群主， 说明在透群主
-            lucky_user = await self.yinpa_owner_handle(uid, prep_list, req_user_card, matcher)
+        uid: int = event.user_id
+        if "群主" in command:  # 如果发送的命令里面含有群主， 说明在透群主
+            return await self.yinpa_owner_handle(uid, prep_list, req_user_card, matcher)
         elif "管理" in command:  # 如果发送的命令里面含有管理， 说明在透管理
-            lucky_user = await self.yinpa_admin_handle(uid, prep_list, req_user_card, matcher)
-        return lucky_user
+            return await self.yinpa_admin_handle(uid, prep_list, req_user_card, matcher)
+        else:
+            return await self.yinpa_member_handle(prep_list, req_user_card, matcher, event)
     
 
     async def yinpa(
@@ -284,20 +291,24 @@ class Impart:
         state: T_State
     ):
         gid, uid, req_user_card, command ,prep_list= await self.yinpa_prehandle(matcher=matcher, bot=bot, state=state, event=event)
-        lucky_user = await self.yinpa_identity_handle(command=command, prep_list=prep_list, req_user_card=req_user_card, matcher=matcher, event=event)
+        lucky_user: str = await self.yinpa_identity_handle(command=command, prep_list=prep_list, req_user_card=req_user_card, matcher=matcher, event=event)
         # 获取群名片或者网名
         lucky_user_card = await utils.get_user_card(bot, gid, int(lucky_user))
         # 1--100的随机数， 保留三位
         ejaculation = round(random.uniform(1, 100), 3)
         try:
-            temp = utils.ejaculation_data[str(
-                lucky_user)][utils.get_today()]["ejaculation"] + ejaculation      # 相加
-            await utils.update_ejaculation(round(temp, 3), str(lucky_user))     # 更新
+            temp = (
+                utils.ejaculation_data[lucky_user][utils.get_today()][
+                    "ejaculation"
+                ]
+                + ejaculation
+            )
+            await utils.update_ejaculation(round(temp, 3), lucky_user)
         except Exception:
-            await utils.update_ejaculation(ejaculation, str(lucky_user))  # 更新
+            await utils.update_ejaculation(ejaculation, lucky_user)
         await asyncio.sleep(2)  # 休眠2秒, 更有效果
         # 准备调用api, 用来获取头像椭偏
-        repo_1 = f"好欸！{req_user_card}({uid})用时{random.randint(1, 20)}秒 \n给 {lucky_user_card}({lucky_user}) 注入了{ejaculation}毫升的脱氧核糖核酸, 当日总注入量为：{utils.get_today_ejaculation(str(lucky_user))}"
+        repo_1 = f"好欸！{req_user_card}({uid})用时{random.randint(1, 20)}秒 \n给 {lucky_user_card}({lucky_user}) 注入了{ejaculation}毫升的脱氧核糖核酸, 当日总注入量为：{utils.get_today_ejaculation(lucky_user)}"
         await matcher.send(repo_1 + MessageSegment.image(f"http://q1.qlogo.cn/g?b=qq&nk={lucky_user}&s=640"))  # 结束
 
 
@@ -306,19 +317,20 @@ class Impart:
         state: T_State,
         matcher: Matcher,
         event: GroupMessageEvent,
-    ):
+    ) -> None:
+        """开关"""
         gid = str(event.group_id)  # 群号
         # 获取用户输入的参数
         args = list(state["_matched_groups"])
         command = args[0]
-        if "开启淫趴" in command:
+        if "开启" in command or "开始" in command:
             if gid in utils.groupdata:
                 utils.groupdata[gid]["allow"] = True
             else:
                 utils.groupdata.update({gid: {"allow": True}})
             utils.write_group_data()
             await matcher.finish("功能已开启喵")
-        elif "禁止淫趴" in command:
+        elif "禁止" in command or "关闭" in command:
             if gid in utils.groupdata:
                 utils.groupdata[gid]["allow"] = False
             else:
@@ -332,7 +344,8 @@ class Impart:
         matcher: Matcher,
         event: GroupMessageEvent, 
         args: Message = CommandArg()
-    ):
+    ) -> None:
+        """查询某人的注入量"""
         if not (await utils.check_group_allow(str(event.group_id))):
             await matcher.finish(utils.not_allow, at_sender=True)
         target = args.extract_plain_text()  # 获取命令参数
@@ -360,7 +373,8 @@ class Impart:
     async def yinpa_introduce(
         self,
         matcher: Matcher
-    ):
+    ) -> None:
+        """输出用法"""
         await matcher.send(MessageSegment.image(await utils.plugin_usage()))
 
 
