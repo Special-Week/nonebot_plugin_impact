@@ -2,7 +2,7 @@ import asyncio
 import random
 import time
 from random import choice
-from typing import Tuple
+from typing import List, Tuple
 
 from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent, Message,
                                          MessageSegment)
@@ -139,7 +139,7 @@ class Impart:
         """查询某人jj的响应器"""
         if not (await utils.check_group_allow(str(event.group_id))):
             await matcher.finish(utils.not_allow, at_sender=True)
-        uid = event.get_user_id()   # 获取用户id, 类型为str
+        uid: str = event.get_user_id()   # 获取用户id, 类型为str
         at: str = await utils.get_at(event)    # 获取at的用户id, 类型为str
         if at == "寄":  # 如果没有at
             if uid in utils.userdata:  # 如果在userdata里面
@@ -215,8 +215,8 @@ class Impart:
 
     async def yinpa_member_handle(
         self,
-        prep_list,
-        req_user_card,
+        prep_list: list,
+        req_user_card: str,
         matcher: Matcher,
         event: GroupMessageEvent
     ) -> str:
@@ -262,7 +262,7 @@ class Impart:
         if not admin_id:          # 如果没有管理的话, del cd信息， 然后finish
             del utils.ejaculation_cd[str(uid)]
             await matcher.finish("喵喵喵? 找不到群管理!")
-        lucky_user = choice(admin_id)   # random抽取一个管理
+        lucky_user: str = choice(admin_id)   # random抽取一个管理
         await matcher.send(f"现在咱将随机抽取一位幸运管理\n送给{req_user_card}色色！")
         return lucky_user
 
@@ -279,7 +279,7 @@ class Impart:
             return await self.yinpa_owner_handle(uid, prep_list, req_user_card, matcher)
         elif "管理" in command:  # 如果发送的命令里面含有管理， 说明在透管理
             return await self.yinpa_admin_handle(uid, prep_list, req_user_card, matcher)
-        else:
+        else:       # 最后是群员
             return await self.yinpa_member_handle(prep_list, req_user_card, matcher, event)
     
 
@@ -289,7 +289,7 @@ class Impart:
         matcher: Matcher,
         event: GroupMessageEvent, 
         state: T_State
-    ):
+    ) -> None:
         gid, uid, req_user_card, command ,prep_list= await self.yinpa_prehandle(matcher=matcher, bot=bot, state=state, event=event)
         lucky_user: str = await self.yinpa_identity_handle(command=command, prep_list=prep_list, req_user_card=req_user_card, matcher=matcher, event=event)
         # 获取群名片或者网名
@@ -307,7 +307,7 @@ class Impart:
         except Exception:
             await utils.update_ejaculation(ejaculation, lucky_user)
         await asyncio.sleep(2)  # 休眠2秒, 更有效果
-        # 准备调用api, 用来获取头像椭偏
+        # 准备调用api, 用来获取头像
         repo_1 = f"好欸！{req_user_card}({uid})用时{random.randint(1, 20)}秒 \n给 {lucky_user_card}({lucky_user}) 注入了{ejaculation}毫升的脱氧核糖核酸, 当日总注入量为：{utils.get_today_ejaculation(lucky_user)}"
         await matcher.send(repo_1 + MessageSegment.image(f"http://q1.qlogo.cn/g?b=qq&nk={lucky_user}&s=640"))  # 结束
 
@@ -319,10 +319,10 @@ class Impart:
         event: GroupMessageEvent,
     ) -> None:
         """开关"""
-        gid = str(event.group_id)  # 群号
+        gid = str(event.group_id)
         # 获取用户输入的参数
-        args = list(state["_matched_groups"])
-        command = args[0]
+        args: List[str] = list(state["_matched_groups"])
+        command: str = args[0]
         if "开启" in command or "开始" in command:
             if gid in utils.groupdata:
                 utils.groupdata[gid]["allow"] = True
@@ -349,7 +349,7 @@ class Impart:
         if not (await utils.check_group_allow(str(event.group_id))):
             await matcher.finish(utils.not_allow, at_sender=True)
         target = args.extract_plain_text()  # 获取命令参数
-        user_id = event.get_user_id()   # 获取对象qq号， 类型string
+        user_id: str = event.get_user_id()
         # 判断带不带at
         [object_id, replay1] = [await utils.get_at(event), "该用户"] if await utils.get_at(event) != "寄" else [user_id, "您"]
         ejaculation = 0             # 先初始化0
