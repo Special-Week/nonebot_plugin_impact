@@ -127,8 +127,7 @@ class Utils:
     async def fuck_cd_check(self, event: GroupMessageEvent) -> bool:
         """透群友检查"""
         uid = event.get_user_id()
-        cd = time.time() - \
-                self.ejaculation_cd[uid] if uid in self.ejaculation_cd else self.fuck_cd_time+1
+        cd = time.time() - self.ejaculation_cd[uid] if uid in self.ejaculation_cd else self.fuck_cd_time+1
         return (
             cd > self.fuck_cd_time
             or event.get_user_id() in nonebot.get_driver().config.superusers
@@ -148,12 +147,8 @@ class Utils:
     async def update_ejaculation(self, ejaculation: float, lucky_user: str) -> None:
         """更新ejaculation_data数据并且写入json"""
         if lucky_user in self.ejaculation_data:
-            target_dict = self.ejaculation_data[lucky_user]
-            target_dict.update({
-                self.get_today(): {
-                    "ejaculation": ejaculation
-                }
-            })
+            target_dict: dict = self.ejaculation_data[lucky_user]
+            target_dict[self.get_today()] = {"ejaculation": ejaculation}
             self.ejaculation_data.update({lucky_user: target_dict})
         else:
             target_dict = {lucky_user: {self.get_today(): {"ejaculation": ejaculation}}}
@@ -176,12 +171,12 @@ class Utils:
         return round(rand_num, 3)
 
 
-    async def get_user_card(self, bot: Bot, group_id, qid) -> str:
+    async def get_user_card(self, bot: Bot, group_id: int, qid: int) -> str:
         """返还用户nickname"""
         user_info: dict = await bot.get_group_member_info(group_id=group_id, user_id=qid)
         return user_info["card"] or user_info["nickname"]
 
-    async def plugin_usage(self):
+    async def plugin_usage(self) -> bytes:
         return await txt_to_img.txt_to_img(self.usage)
 
 

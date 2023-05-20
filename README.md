@@ -12,15 +12,16 @@
 响应器如下
 
 ```python
-suo = on_command("嗦牛子", priority=20, block=True)
-dajiao = on_regex("^(打胶|开导)$", priority=20, block=True)
-pk = on_command("pk", aliases={"对决"}, rule=rule, priority=20, block=False)
-queryJJ = on_command("查询", priority=20, block=False)
-JJrank = on_command("jj排行榜", aliases={"jj排名", "jj榜单", "jjrank"}, priority=20, block=True)
-openmodule = on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, flags=I, priority=20, block=True)
-yinPa = on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理)", flags=I, priority=20, block=True)
-queryinjection = on_command("注入查询", aliases={"摄入查询", "射入查询"}, priority=20, block=True)
-yinpaIntroduce = on_command("淫趴介绍", priority=20, block=True)
+on_command("pk", aliases={"对决"}, rule=utils.rule, priority=20, block=False, handlers=[impart.pk])
+on_regex("^(打胶|开导)$", priority=20, block=True, handlers=[impart.dajiao])
+on_command("嗦牛子", priority=20, block=True, handlers=[impart.suo])
+on_command("查询", priority=20, block=False, handlers=[impart.queryjj])
+on_command("jj排行榜", aliases={"jj排名", "jj榜单", "jjrank"}, priority=20, block=True, handlers=[impart.jjrank])
+on_regex(r"^(日群友|透群友|日群主|透群主|日管理|透管理)", flags=I, priority=20, block=True, handlers=[impart.yinpa])
+on_regex(r"^(开启淫趴|禁止淫趴)", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, flags=I, priority=20, block=True, handlers=[impart.open_module])
+on_command("注入查询", aliases={"摄入查询", "射入查询"}, priority=20, block=True, handlers=[impart.query_injection])
+on_command("淫趴介绍", priority=20, block=True)
+
 ```
 
 ### 注意:

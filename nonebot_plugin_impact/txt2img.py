@@ -38,7 +38,7 @@ class TxtToImg:
         return ret if ret.endswith("\n") else ret + "\n"
 
 
-    async def txt_to_img(self, text: str, font_size=30, font_path="simsun.ttc") -> bytes:
+    async def txt_to_img(self, text: str, font_size: int=30, font_path: str="simsun.ttc") -> bytes:
         """将文本转换为图片"""
         text = await self.line_break(text)
         d_font = ImageFont.truetype(font_path, font_size)
