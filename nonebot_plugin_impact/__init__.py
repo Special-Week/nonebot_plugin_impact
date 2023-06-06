@@ -22,6 +22,9 @@ __plugin_meta__ = PluginMetadata(
     name="impact",
     description="让群友们眼前一黑的nonebot2淫趴插件",
     usage=utils.usage,
+    type="application",
+    homepage="https://github.com/Special-Week/nonebot_plugin_impact",
+    supported_adapters={"~onebot.v11"},
     extra={
         'author':   'Special-Week',
         'version':  '?.?.?',

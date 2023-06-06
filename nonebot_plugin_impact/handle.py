@@ -2,13 +2,12 @@ import asyncio
 import random
 import time
 from random import choice
-from typing import List, Tuple
+from typing import Tuple
 
 from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent, Message,
                                          MessageSegment)
 from nonebot.matcher import Matcher
-from nonebot.params import CommandArg
-from nonebot.typing import T_State
+from nonebot.params import CommandArg, RegexGroup
 
 from .txt2img import txt_to_img
 from .utils import utils
@@ -195,7 +194,7 @@ class Impart:
     async def yinpa_prehandle(
         self,
         bot: Bot,
-        state: T_State,
+        args: Tuple,
         matcher: Matcher,
         event: GroupMessageEvent,
     ) -> Tuple[int, int, str, str, list]:
@@ -207,7 +206,6 @@ class Impart:
         if not allow:
             await matcher.finish(f"你已经榨不出来任何东西了, 请先休息{round(utils.fuck_cd_time-(time.time() - utils.ejaculation_cd[str(uid)]),3)}秒", at_sender=True)
         utils.ejaculation_cd.update({str(uid): time.time()})  # 记录时间
-        args = list(state["_matched_groups"])
         req_user_card = await utils.get_user_card(bot, group_id=int(gid), qid=int(uid))
         prep_list = await bot.get_group_member_list(group_id=gid)
         return gid,uid,req_user_card, args[0],prep_list
@@ -288,9 +286,9 @@ class Impart:
         bot: Bot, 
         matcher: Matcher,
         event: GroupMessageEvent, 
-        state: T_State
+        args: Tuple = RegexGroup()
     ) -> None:
-        gid, uid, req_user_card, command ,prep_list= await self.yinpa_prehandle(matcher=matcher, bot=bot, state=state, event=event)
+        gid, uid, req_user_card, command ,prep_list= await self.yinpa_prehandle(matcher=matcher, bot=bot, args=args, event=event)
         lucky_user: str = await self.yinpa_identity_handle(command=command, prep_list=prep_list, req_user_card=req_user_card, matcher=matcher, event=event)
         # 获取群名片或者网名
         lucky_user_card = await utils.get_user_card(bot, gid, int(lucky_user))
@@ -314,14 +312,12 @@ class Impart:
 
     async def open_module(
         self,
-        state: T_State,
         matcher: Matcher,
         event: GroupMessageEvent,
+        args: Tuple = RegexGroup()
     ) -> None:
         """开关"""
         gid = str(event.group_id)
-        # 获取用户输入的参数
-        args: List[str] = list(state["_matched_groups"])
         command: str = args[0]
         if "开启" in command or "开始" in command:
             if gid in utils.groupdata:
