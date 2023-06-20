@@ -1,9 +1,10 @@
+import contextlib
 from re import I
 
 from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
 from nonebot.permission import SUPERUSER
-from nonebot.plugin import PluginMetadata
+
 from .handle import impart
 from .utils import utils
 
@@ -17,17 +18,18 @@ on_regex(r"^(开始银趴|关闭银趴|开启淫趴|禁止淫趴|开启银趴|�
 on_command("注入查询", aliases={"摄入查询", "射入查询"}, priority=20, block=True, handlers=[impart.query_injection])
 on_command("淫趴介绍", priority=20, block=True)
 
-
-__plugin_meta__ = PluginMetadata(
-    name="impact",
-    description="让群友们眼前一黑的nonebot2淫趴插件",
-    usage=utils.usage,
-    type="application",
-    homepage="https://github.com/Special-Week/nonebot_plugin_impact",
-    supported_adapters={"~onebot.v11"},
-    extra={
-        'author':   'Special-Week',
-        'version':  '?.?.?',
-        'priority': 20,
-    }
-)
+with contextlib.suppress(Exception):
+    from nonebot.plugin import PluginMetadata
+    __plugin_meta__ = PluginMetadata(
+        name="impact",
+        description="让群友们眼前一黑的nonebot2淫趴插件",
+        usage=utils.usage,
+        type="application",
+        homepage="https://github.com/Special-Week/nonebot_plugin_impact",
+        supported_adapters={"~onebot.v11"},
+        extra={
+            'author':   'Special-Week',
+            'version':  '?.?.?',
+            'priority': 20,
+        }
+    )
