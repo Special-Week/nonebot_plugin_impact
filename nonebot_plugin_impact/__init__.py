@@ -19,7 +19,8 @@ on_command(
 
 on_regex(
     "^(打胶|开导)$", 
-    priority=20, block=True, 
+    priority=20, 
+    block=True, 
     handlers=[impart.dajiao]
 )
 
@@ -72,7 +73,8 @@ on_command(
 on_command(
     "淫趴介绍", 
     priority=20, 
-    block=True
+    block=True,
+    handlers=[impart.yinpa_introduce]
 )
 
 with contextlib.suppress(Exception):
@@ -87,7 +89,7 @@ with contextlib.suppress(Exception):
         supported_adapters={"~onebot.v11"},
         extra={
             "author": "Special-Week",
-            "version": "0.02.114514",
+            "version": "0.03.114514",
             "priority": 20,
         },
     )
