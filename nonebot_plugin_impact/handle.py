@@ -8,7 +8,7 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, Message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, RegexGroup
 
-from .txt2img import txt_to_img
+from .draw_img import draw_bar_chart
 from .utils import utils
 
 
@@ -216,17 +216,12 @@ class Impart:
         ]
         top5names = [name["nickname"] for name in top5info]
         last5names = [name["nickname"] for name in last5info]
-        # 构造消息，手搓
-        reply = "咱只展示前五名和后五名喵\n"
-        top5txt = f"{top5names[0]} ------> {top5[0][1]}cm\n{top5names[1]} ------> {top5[1][1]}cm\n{top5names[2]} ------> {top5[2][1]}cm\n{top5names[3]} ------> {top5[3][1]}cm\n{top5names[4]} ------> {top5[4][1]}cm\n"
-        last5txt = f"{last5names[0]} ------> {last5[0][1]}cm\n{last5names[1]} ------> {last5[1][1]}cm\n{last5names[2]} ------> {last5[2][1]}cm\n{last5names[3]} ------> {last5[3][1]}cm\n{last5names[4]} ------> {last5[4][1]}cm\n"
-        img_bytes = await txt_to_img.txt_to_img(
-            top5txt + ".................................\n" * 3 + last5txt
-        )  # 生成图片
+        data = {top5names[i]: top5[i][1] for i in range(len(top5))}
+        for i in range(len(last5)):
+            data[last5names[i]] = last5[i][1]
+        img_bytes = await draw_bar_chart.draw_bar_chart(data)
         reply2 = f"你的排名为{index[0]+1}喵"
-        await matcher.finish(
-            reply + MessageSegment.image(img_bytes) + reply2, at_sender=True
-        )
+        await matcher.finish(MessageSegment.image(img_bytes) + reply2, at_sender=True)
 
     @staticmethod
     async def yinpa_prehandle(
@@ -402,15 +397,19 @@ class Impart:
                 date = utils.ejaculation_data[object_id]  # 对象不存在直接输出0
             except Exception:
                 await matcher.finish(f"{replay1}历史总被注射量为0ml")
-            pic_string: str = ""  # 文字， 准备弄成图片
+            inject_data = {}
             for key in date:  # 遍历所有的日期
                 temp = date[key]["ejaculation"]
                 ejaculation += temp  # 注入量求和
-                pic_string += f"{key}\t\t{temp}\n"
+                inject_data[key] = temp
+            if len(inject_data) < 2:
+                await matcher.finish(f"{replay1}历史总被注射量为{ejaculation}ml")
 
             await matcher.finish(
                 MessageSegment.text(f"{replay1}历史总被注射量为{ejaculation}ml")
-                + MessageSegment.image(await txt_to_img.txt_to_img(pic_string))
+                + MessageSegment.image(
+                    await draw_bar_chart.draw_line_chart(inject_data)
+                )
             )
         else:
             ejaculation = utils.get_today_ejaculation(object_id)  # 获取对象当天的注入量

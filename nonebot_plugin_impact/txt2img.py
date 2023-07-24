@@ -9,7 +9,6 @@ class TxtToImg:
         self.CHAR_SIZE = 30
         self.TABLE_WIDTH = 4
 
-
     async def line_break(self, line: str) -> str:
         """将一行文本按照指定宽度进行换行"""
         ret = ""
@@ -26,7 +25,9 @@ class TxtToImg:
                 width = 0
                 ret += c
             elif c == "\t":
-                space_c = self.TABLE_WIDTH - width % self.TABLE_WIDTH  # 已有长度对TABLE_WIDTH取余
+                space_c = (
+                    self.TABLE_WIDTH - width % self.TABLE_WIDTH
+                )  # 已有长度对TABLE_WIDTH取余
                 ret += " " * space_c
                 width += space_c
             else:
@@ -37,23 +38,25 @@ class TxtToImg:
                 width = 0
         return ret if ret.endswith("\n") else ret + "\n"
 
-
-    async def txt_to_img(self, text: str, font_size: int=30, font_path: str="simsun.ttc") -> bytes:
+    async def txt_to_img(
+        self, text: str, font_size: int = 30, font_path: str = "simsun.ttc"
+    ) -> bytes:
         """将文本转换为图片"""
         text = await self.line_break(text)
         d_font = ImageFont.truetype(font_path, font_size)
         lines = text.count("\n")
         image = Image.new(
-            "L", (self.LINE_CHAR_COUNT * font_size // 2 + 50, font_size * lines + 50), "white"
+            "L",
+            (self.LINE_CHAR_COUNT * font_size // 2 + 50, font_size * lines + 50),
+            "white",
         )
         draw_table = ImageDraw.Draw(im=image)
-        draw_table.text(
-            xy=(25, 25), text=text, fill="#000000", font=d_font, spacing=4
-        )
+        draw_table.text(xy=(25, 25), text=text, fill="#000000", font=d_font, spacing=4)
         new_img = image.convert("RGB")
         img_byte = BytesIO()
         new_img.save(img_byte, format="PNG")
         return img_byte.getvalue()
-    
+
+
 # 创建一个实例
 txt_to_img = TxtToImg()
