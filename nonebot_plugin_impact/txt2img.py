@@ -1,6 +1,7 @@
 from io import BytesIO
 
 from PIL import Image, ImageDraw, ImageFont
+from pathlib import Path
 
 
 class TxtToImg:
@@ -8,6 +9,8 @@ class TxtToImg:
         self.LINE_CHAR_COUNT = 30 * 2
         self.CHAR_SIZE = 30
         self.TABLE_WIDTH = 4
+        self.module_path: Path = Path(__file__).parent
+        self.font = str(self.module_path / "fonts" / "SIMYOU.TTF")
 
     async def line_break(self, line: str) -> str:
         """将一行文本按照指定宽度进行换行"""
@@ -38,12 +41,10 @@ class TxtToImg:
                 width = 0
         return ret if ret.endswith("\n") else ret + "\n"
 
-    async def txt_to_img(
-        self, text: str, font_size: int = 30, font_path: str = "simsun.ttc"
-    ) -> bytes:
+    async def txt_to_img(self, text: str, font_size: int = 30) -> bytes:
         """将文本转换为图片"""
         text = await self.line_break(text)
-        d_font = ImageFont.truetype(font_path, font_size)
+        d_font = ImageFont.truetype(self.font, font_size)
         lines = text.count("\n")
         image = Image.new(
             "L",
