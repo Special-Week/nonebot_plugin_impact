@@ -73,7 +73,7 @@ class DrawBarChart:
                 fill="black",
                 font=ImageFont.truetype(self.font, 20),
             )
-        for i in range(4):
+        for i in range(1, 4):
             draw.text(
                 (450, 770 + 780 * i / 10 - 10),
                 f"-{str(minnum_scale * i)}",
