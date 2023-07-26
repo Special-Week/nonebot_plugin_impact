@@ -172,7 +172,7 @@ class DrawBarChart:
 
         for i in range(10):
             draw_dotted_line(1000 - 950 * i / 10)
-        maxnum_scale = int(maxnum_scale / 50) * 20
+        maxnum_scale = int((maxnum_scale / 20 + 1) * 20)
         if maxnum_scale == 0:
             maxnum_scale = 20
 
