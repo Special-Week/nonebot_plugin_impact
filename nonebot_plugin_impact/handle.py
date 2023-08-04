@@ -387,7 +387,7 @@ class Impart:
         utils.isdailyalive_data[utils.get_today()][uid]["usage"] +=1
         utils.write_isdailyalive()
         # 准备调用api, 用来获取头像
-        repo_1 = f"好欸！{req_user_card}({uid})用时{random.randint(1, 21600)}秒 \n给 {lucky_user_card}({lucky_user}) 注入了{ejaculation}毫升的脱氧核糖核酸, 当日总注入量为：{utils.get_today_ejaculation(lucky_user)}"
+        repo_1 = f"好欸！{req_user_card}({uid})用时{random.randint(1, 20)}秒 \n给 {lucky_user_card}({lucky_user}) 注入了{ejaculation}毫升的脱氧核糖核酸, 当日总注入量为：{utils.get_today_ejaculation(lucky_user)}"
         await matcher.send(
             repo_1
             + MessageSegment.image(f"https://q1.qlogo.cn/g?b=qq&nk={lucky_user}&s=640")
