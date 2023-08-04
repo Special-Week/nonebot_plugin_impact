@@ -8,6 +8,14 @@ from nonebot.permission import SUPERUSER
 from .handle import impart
 from .utils import utils
 
+from nonebot import require
+
+require("nonebot_plugin_apscheduler")
+
+from nonebot_plugin_apscheduler import scheduler
+
+scheduler.add_job(impart.penalties_and_resets, "cron", hour = 0, misfire_grace_time = 600)
+
 on_command(
     "pk",
     aliases={"对决"},
