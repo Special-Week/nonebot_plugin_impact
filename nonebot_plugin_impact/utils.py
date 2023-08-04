@@ -2,6 +2,7 @@ import json
 import os
 import random
 import time
+import datetime
 
 import nonebot
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
@@ -21,6 +22,8 @@ class Utils:
             self.write_ejaculation_data()
             self.groupdata = {}
             self.write_group_data()
+            self.isdailyalive_data = {}
+            self.write_isdailyalive()
         else:
             if os.path.exists(f"{self.data_path}/userdata.json"):  # 读取用户数据
                 with open(
@@ -46,6 +49,14 @@ class Utils:
             else:
                 self.ejaculation_data = {}
                 self.write_ejaculation_data()  # 这种结构, 不想重构也不想新建json了，所以放宽了这么多{"user_id": {"date": {"ejaculation": 123}}}
+            if os.path.exists(f"{self.data_path}/isdailyalive.json"):  # 读取用户数据
+                with open(
+                    f"{self.data_path}/isdailyalive.json", "r", encoding="utf-8"
+                ) as f:
+                    self.isdailyalive_data = json.load(f)
+            else:
+                self.isdailyalive_data = {}
+                self.write_isdailyalive()
         self.usage = """指令1: 嗦牛子 (给目标牛牛增加长度, 自己或者他人, 通过艾特选择对象, 没有at时目标是自己)
 指令2: 打胶 | 开导 (给自己牛牛增加长度)
 指令3: pk | 对决 (普通的pk,单纯的random实现输赢, 胜利方获取败方随机数/2的牛牛长度)
@@ -83,6 +94,13 @@ class Utils:
             f"{self.data_path}/ejaculation_data.json", "w", encoding="utf-8"
         ) as f:
             json.dump(self.ejaculation_data, f, indent=4, ensure_ascii=False)
+            
+    def write_isdailyalive(self) -> None:
+        """写入活跃数据"""
+        with open(
+            f"{self.data_path}/isdailyalive.json", "w", encoding="utf-8"
+        ) as f:
+            json.dump(self.isdailyalive_data, f, indent=4, ensure_ascii=False)
 
     @staticmethod
     async def rule(event: GroupMessageEvent) -> bool:
@@ -154,6 +172,13 @@ class Utils:
     def get_today() -> str:
         """获取当前年月日  2023-02-04"""
         return time.strftime("%Y-%m-%d", time.localtime())
+        
+    @staticmethod
+    def get_yesterday() -> str:
+        """获取前一天的年月日，格式为 2023-02-03"""
+        today = datetime.date.today()
+        yesterday = today - datetime.timedelta(days=1)
+        return yesterday.strftime("%Y-%m-%d")
 
     async def update_ejaculation(self, ejaculation: float, lucky_user: str) -> None:
         """更新ejaculation_data数据并且写入json"""
@@ -172,6 +197,24 @@ class Utils:
             return self.ejaculation_data[user_id][self.get_today()]["ejaculation"]
         except Exception:
             return 0
+            
+    def get_yestoday_isdailyalive(self, user_id: str) -> int:
+        """获取昨日活跃度"""
+        try:
+            return self.isdailyalive_data[self.get_yesterday()][user_id]["usage"]
+        except Exception:
+            return 0
+    
+    def check_alive(self, user_id: str) -> bool:
+        if self.get_yestoday_isdailyalive(user_id) >= 1:
+            return True
+        else:
+            return False
+            
+    def get_data_today(self, user_id: str):
+        user_data = self.isdailyalive_data.setdefault(self.get_today(), {})
+        usage = user_data.setdefault(user_id, {}).setdefault("usage", 0)
+        return usage
 
     @staticmethod
     def get_random_num() -> float:
