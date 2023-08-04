@@ -7,12 +7,32 @@ from typing import Tuple
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, RegexGroup
+from nonebot import get_driver
 
 from .draw_img import draw_bar_chart
 from .utils import utils
 
-
 class Impart:
+    reset_impact: bool = getattr(get_driver().config, "reset_impact", False) # 对不活跃用户进行处罚
+    penalties_impact: bool = getattr(get_driver().config, "isalive", False) # 重置每日活跃度
+    
+    @staticmethod
+    def penalties_and_resets() -> None:
+        userdata_keys = utils.userdata.keys()
+        if Impart.penalties_impact:
+            for uid in userdata_keys:
+                if not utils.check_alive(uid):
+                    length = utils.userdata[uid]
+                    if length >= 1.001:
+                        penalties = round(random.random(), 3)
+                        penalties_data = float(('%.3f'%(length - penalties)))
+                        utils.userdata.update({uid: penalties_data})  # 更新userdata
+                    utils.write_user_data()  # 写入文件
+        if Impart.reset_impact:
+            utils.isdailyalive_data = {}
+            utils.write_isdailyalive()
+                    
+    
     @staticmethod
     async def pk(matcher: Matcher, event: GroupMessageEvent) -> None:
         """pk的响应器"""
@@ -41,6 +61,10 @@ class Impart:
                 # 更新userdata
                 utils.userdata.update({at: round(utils.userdata[at] - random_num, 3)})
                 utils.write_user_data()  # 写入文件
+                # 更新活跃度
+                data_today = utils.get_data_today(uid)
+                utils.isdailyalive_data[utils.get_today()][uid]["usage"] +=1
+                utils.write_isdailyalive()
                 await matcher.finish(
                     f"对决胜利喵, 你的{choice(utils.jj_variable)}增加了{round(random_num/2,3)}cm喵, 对面则在你的阴影笼罩下减小了{random_num}cm喵",
                     at_sender=True,
@@ -55,6 +79,9 @@ class Impart:
                     {at: round(utils.userdata[at] + random_num / 2, 3)}
                 )
                 utils.write_user_data()  # 写入文件
+                data_today = utils.get_data_today(uid)
+                utils.isdailyalive_data[utils.get_today()][uid]["usage"] +=1
+                utils.write_isdailyalive()
                 await matcher.finish(
                     f"对决失败喵, 在对面牛子的阴影笼罩下你的{choice(utils.jj_variable)}减小了{random_num}cm喵, 对面增加了{round(random_num/2,3)}cm喵",
                     at_sender=True,
@@ -91,6 +118,9 @@ class Impart:
                 {uid: round(utils.userdata[uid] + random_num, 3)}
             )  # 更新userdata
             utils.write_user_data()  # 写入文件
+            data_today = utils.get_data_today(uid)
+            utils.isdailyalive_data[utils.get_today()][uid]["usage"] +=1
+            utils.write_isdailyalive()
             await matcher.finish(
                 f"打胶结束喵, 你的{choice(utils.jj_variable)}很满意喵, 长了{random_num}cm喵, 目前长度为{utils.userdata[uid]}cm喵",
                 at_sender=True,
@@ -125,6 +155,9 @@ class Impart:
                     {uid: round(utils.userdata[uid] + random_num, 3)}
                 )  # 更新userdata
                 utils.write_user_data()  # 写入文件
+                data_today = utils.get_data_today(uid)
+                utils.isdailyalive_data[utils.get_today()][uid]["usage"] +=1
+                utils.write_isdailyalive()
                 await matcher.finish(
                     f"你的{choice(utils.jj_variable)}很满意喵, 嗦长了{random_num}cm喵, 目前长度为{utils.userdata[uid]}cm喵",
                     at_sender=True,
@@ -142,6 +175,9 @@ class Impart:
             # 更新userdata
             utils.userdata.update({at: round(utils.userdata[at] + random_num, 3)})
             utils.write_user_data()  # 写入文件
+            data_today = utils.get_data_today(uid)
+            utils.isdailyalive_data[utils.get_today()][at]["usage"] +=1
+            utils.write_isdailyalive()
             await matcher.finish(
                 f"对方的{choice(utils.jj_variable)}很满意喵, 嗦长了{random_num}cm喵, 目前长度为{utils.userdata[at]}cm喵",
                 at_sender=True,
@@ -151,7 +187,7 @@ class Impart:
             utils.write_user_data()  # 写入文件
             del utils.suo_cd_data[uid]  # 删除CD时间
             await matcher.finish(
-                f"他还没有创建{choice(utils.jj_variable)}喵, 咱帮他创建了喵, 目前长度是10cm喵",
+                f"TA还没有创建{choice(utils.jj_variable)}喵, 咱帮TA创建了喵, 目前长度是10cm喵",
                 at_sender=True,
             )
 
@@ -177,14 +213,14 @@ class Impart:
                 )
         elif at in utils.userdata:  # 如果在userdata里面
             await matcher.finish(
-                f"他的{choice(utils.jj_variable)}目前长度为{utils.userdata[at]}cm喵",
+                f"TA的{choice(utils.jj_variable)}目前长度为{utils.userdata[at]}cm喵",
                 at_sender=True,
             )
         else:
             utils.userdata.update({at: 10})  # 创建用户
             utils.write_user_data()  # 写入文件
             await matcher.finish(
-                f"他还没有创建{choice(utils.jj_variable)}喵, 咱帮他创建了喵, 目前长度是10cm喵",
+                f"TA还没有创建{choice(utils.jj_variable)}喵, 咱帮他创建了喵, 目前长度是10cm喵",
                 at_sender=True,
             )
 
@@ -258,7 +294,7 @@ class Impart:
             # 随机抽取幸运成员
             prep_list.remove(event.user_id)
             lucky_user = choice(prep_list)
-            await matcher.send(f"现在咱将随机抽取一位幸运裙友\n送给{req_user_card}色色！")
+            await matcher.send(f"现在咱将随机抽取一位幸运群友\n送给{req_user_card}色色！")
         else:  # 有的话lucky user就是at的人
             lucky_user = target
         return lucky_user
@@ -347,11 +383,14 @@ class Impart:
         except Exception:
             await utils.update_ejaculation(ejaculation, lucky_user)
         await asyncio.sleep(2)  # 休眠2秒, 更有效果
+        data_today = utils.get_data_today(uid)
+        utils.isdailyalive_data[utils.get_today()][uid]["usage"] +=1
+        utils.write_isdailyalive()
         # 准备调用api, 用来获取头像
-        repo_1 = f"好欸！{req_user_card}({uid})用时{random.randint(1, 20)}秒 \n给 {lucky_user_card}({lucky_user}) 注入了{ejaculation}毫升的脱氧核糖核酸, 当日总注入量为：{utils.get_today_ejaculation(lucky_user)}"
+        repo_1 = f"好欸！{req_user_card}({uid})用时{random.randint(1, 21600)}秒 \n给 {lucky_user_card}({lucky_user}) 注入了{ejaculation}毫升的脱氧核糖核酸, 当日总注入量为：{utils.get_today_ejaculation(lucky_user)}"
         await matcher.send(
             repo_1
-            + MessageSegment.image(f"http://q1.qlogo.cn/g?b=qq&nk={lucky_user}&s=640")
+            + MessageSegment.image(f"https://q1.qlogo.cn/g?b=qq&nk={lucky_user}&s=640")
         )  # 结束
 
     @staticmethod
