@@ -22,8 +22,7 @@ Base = orm.declarative_base()
 class UserData(Base):
     __tablename__: str = "userdata"
     userid = Column(Integer, primary_key=True, index=True)
-    username = Column(String, nullable=True)
-    injection_volume = Column(Float, nullable=False)
+    jj_length = Column(Float, nullable=False)
 
 
 class GroupData(Base):
@@ -54,14 +53,10 @@ with open("ejaculation_data.json", "r", encoding="utf-8") as f:
 
 
 with session() as s:
-    for userid, injection_volume in userdata.items():
+    for userid, jj_length in userdata.items():
         if not s.query(UserData).filter(UserData.userid == userid).first():
             logger.info(f"插入用户 {userid}")
-            s.add(
-                UserData(
-                    userid=int(userid), username=None, injection_volume=injection_volume
-                )
-            )
+            s.add(UserData(userid=int(userid), jj_length=jj_length))
         else:
             logger.info(f"用户 {userid} 已存在, 跳过插入")
 
