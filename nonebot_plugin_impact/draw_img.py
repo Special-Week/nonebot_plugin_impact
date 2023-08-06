@@ -1,3 +1,4 @@
+"""绘画图表模块"""
 import random
 from io import BytesIO
 from pathlib import Path

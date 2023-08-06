@@ -56,6 +56,5 @@ on_command("淫趴介绍", priority=20, block=True)
 | suoCDTime    | int  | 300     | suoCDTime = 300      | 嗦牛子的CD |
 | fuckCDTime   | int  | 3600    | fuckCDTime = 3600    | 透群友的CD |
 | isalive      | bool | False   | isalive = True       | 不活跃惩罚 |
-| reset_impact | bool | False   | reset_impact = False | 清除昨日活跃 |
 
 以上配置项单位为秒或bool值, 大小写不敏感(反正env里面拿到dict都是小写的key)

@@ -1,14 +1,12 @@
 import contextlib
 from re import I
 
-from nonebot import on_command, on_regex
+from nonebot import on_command, on_regex, require
 from nonebot.adapters.onebot.v11.permission import GROUP_ADMIN, GROUP_OWNER
 from nonebot.permission import SUPERUSER
 
 from .handle import impart
 from .utils import utils
-
-from nonebot import require
 
 require("nonebot_plugin_apscheduler")
 
@@ -97,7 +95,7 @@ with contextlib.suppress(Exception):
         supported_adapters={"~onebot.v11"},
         extra={
             "author": "Special-Week",
-            "version": "0.06.114514",
+            "version": "0.07.114514",
             "priority": 20,
         },
     )

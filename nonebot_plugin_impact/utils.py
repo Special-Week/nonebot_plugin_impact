@@ -1,62 +1,17 @@
-import json
-import os
+"""放一点工具函数"""
 import random
 import time
-import datetime
+from typing import Union
 
 import nonebot
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
 from .txt2img import txt_to_img
 
 
 class Utils:
     def __init__(self) -> None:
-        """读取配置, 可能有人要问了, 为什么要搞这么多个json, 因为我自己的bot上个数据有多个用户数据, 我懒得合并了"""
-        self.data_path: str = "./data/impact"
-        if not os.path.exists(self.data_path):
-            os.makedirs(self.data_path)
-            self.userdata = {}
-            self.write_user_data()
-            self.ejaculation_data = {}
-            self.write_ejaculation_data()
-            self.groupdata = {}
-            self.write_group_data()
-            self.isdailyalive_data = {}
-            self.write_isdailyalive()
-        else:
-            if os.path.exists(f"{self.data_path}/userdata.json"):  # 读取用户数据
-                with open(
-                    f"{self.data_path}/userdata.json", "r", encoding="utf-8"
-                ) as f:
-                    self.userdata = json.load(f)  # json结构 {"user_id":int}
-            else:  # 不存在则创建
-                self.userdata = {}
-                self.write_user_data()
-            if os.path.exists(f"{self.data_path}/groupdata.json"):
-                with open(
-                    f"{self.data_path}/groupdata.json", "r", encoding="utf-8"
-                ) as f:
-                    self.groupdata = json.load(f)
-            else:
-                self.groupdata = {}
-                self.write_group_data()  # json结构{"group_id": {"allow": true|false}}
-            if os.path.exists(f"{self.data_path}/ejaculation_data.json"):  # 读取用户数据
-                with open(
-                    f"{self.data_path}/ejaculation_data.json", "r", encoding="utf-8"
-                ) as f:
-                    self.ejaculation_data = json.load(f)
-            else:
-                self.ejaculation_data = {}
-                self.write_ejaculation_data()  # 这种结构, 不想重构也不想新建json了，所以放宽了这么多{"user_id": {"date": {"ejaculation": 123}}}
-            if os.path.exists(f"{self.data_path}/isdailyalive.json"):  # 读取用户数据
-                with open(
-                    f"{self.data_path}/isdailyalive.json", "r", encoding="utf-8"
-                ) as f:
-                    self.isdailyalive_data = json.load(f)
-            else:
-                self.isdailyalive_data = {}
-                self.write_isdailyalive()
+        """读取配置"""
         self.usage = """指令1: 嗦牛子 (给目标牛牛增加长度, 自己或者他人, 通过艾特选择对象, 没有at时目标是自己)
 指令2: 打胶 | 开导 (给自己牛牛增加长度)
 指令3: pk | 对决 (普通的pk,单纯的random实现输赢, 胜利方获取败方随机数/2的牛牛长度)
@@ -77,30 +32,6 @@ class Utils:
         self.pk_cd_time: int = getattr(config, "pkcdtime", 60)  # pk冷却时间
         self.suo_cd_time: int = getattr(config, "suocdtime", 300)  # 嗦牛子冷却时间
         self.fuck_cd_time: int = getattr(config, "fuckcdtime", 3600)  # 透群友冷却时间
-
-    def write_group_data(self) -> None:
-        """写入群配置"""
-        with open(f"{self.data_path}/groupdata.json", "w", encoding="utf-8") as f:
-            json.dump(self.groupdata, f, indent=4, ensure_ascii=False)
-
-    def write_user_data(self) -> None:
-        """写入用户数据"""
-        with open(f"{self.data_path}/userdata.json", "w", encoding="utf-8") as f:
-            json.dump(self.userdata, f, indent=4)
-
-    def write_ejaculation_data(self) -> None:
-        """写入注入数据"""
-        with open(
-            f"{self.data_path}/ejaculation_data.json", "w", encoding="utf-8"
-        ) as f:
-            json.dump(self.ejaculation_data, f, indent=4, ensure_ascii=False)
-            
-    def write_isdailyalive(self) -> None:
-        """写入活跃数据"""
-        with open(
-            f"{self.data_path}/isdailyalive.json", "w", encoding="utf-8"
-        ) as f:
-            json.dump(self.isdailyalive_data, f, indent=4, ensure_ascii=False)
 
     @staticmethod
     async def rule(event: GroupMessageEvent) -> bool:
@@ -125,7 +56,7 @@ class Utils:
         )
 
     async def cd_check(self, uid: str) -> bool:
-        """冷却检查"""
+        """打胶的冷却检查"""
         cd = (
             time.time() - self.cd_data[uid]
             if uid in self.cd_data
@@ -164,58 +95,6 @@ class Utils:
             or event.get_user_id() in nonebot.get_driver().config.superusers
         )
 
-    async def check_group_allow(self, gid: str) -> bool:
-        """检查群是否允许"""
-        return self.groupdata[gid]["allow"] if gid in self.groupdata else False
-
-    @staticmethod
-    def get_today() -> str:
-        """获取当前年月日  2023-02-04"""
-        return time.strftime("%Y-%m-%d", time.localtime())
-        
-    @staticmethod
-    def get_yesterday() -> str:
-        """获取前一天的年月日，格式为 2023-02-03"""
-        today = datetime.date.today()
-        yesterday = today - datetime.timedelta(days=1)
-        return yesterday.strftime("%Y-%m-%d")
-
-    async def update_ejaculation(self, ejaculation: float, lucky_user: str) -> None:
-        """更新ejaculation_data数据并且写入json"""
-        if lucky_user in self.ejaculation_data:
-            target_dict: dict = self.ejaculation_data[lucky_user]
-            target_dict[self.get_today()] = {"ejaculation": ejaculation}
-            self.ejaculation_data.update({lucky_user: target_dict})
-        else:
-            target_dict = {lucky_user: {self.get_today(): {"ejaculation": ejaculation}}}
-            self.ejaculation_data.update(target_dict)
-        self.write_ejaculation_data()
-
-    def get_today_ejaculation(self, user_id: str) -> float:
-        """获取当日注入的量"""
-        try:
-            return self.ejaculation_data[user_id][self.get_today()]["ejaculation"]
-        except Exception:
-            return 0
-            
-    def get_yestoday_isdailyalive(self, user_id: str) -> int:
-        """获取昨日活跃度"""
-        try:
-            return self.isdailyalive_data[self.get_yesterday()][user_id]["usage"]
-        except Exception:
-            return 0
-    
-    def check_alive(self, user_id: str) -> bool:
-        if self.get_yestoday_isdailyalive(user_id) >= 1:
-            return True
-        else:
-            return False
-            
-    def get_data_today(self, user_id: str):
-        user_data = self.isdailyalive_data.setdefault(self.get_today(), {})
-        usage = user_data.setdefault(user_id, {}).setdefault("usage", 0)
-        return usage
-
     @staticmethod
     def get_random_num() -> float:
         """获取随机数 0.1的概率是1-2随机获取, 剩下0.9是0-1"""
@@ -224,12 +103,10 @@ class Utils:
         return round(rand_num, 3)
 
     @staticmethod
-    async def get_user_card(bot: Bot, group_id: int, qid: int) -> str:
+    async def get_user_card(event: GroupMessageEvent) -> Union[None, str]:
         """返还用户nickname"""
-        user_info: dict = await bot.get_group_member_info(
-            group_id=group_id, user_id=qid
-        )
-        return user_info["card"] or user_info["nickname"]
+        sender = event.sender
+        return sender.card or sender.nickname
 
     async def plugin_usage(self) -> bytes:
         return await txt_to_img.txt_to_img(self.usage)
