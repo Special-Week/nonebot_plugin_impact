@@ -14,7 +14,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import sessionmaker
 
-engine: Engine = create_engine("sqlite:///userdata.db")
+engine: Engine = create_engine("sqlite:///impact.db")
 session = sessionmaker(engine)
 Base = orm.declarative_base()
 
