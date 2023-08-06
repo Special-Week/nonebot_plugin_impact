@@ -10,6 +10,7 @@
 │   │       ├── userdata.json
 │   │       ├── groupdata.json
 │   │       ├── ejaculation_data.json
+│   │       ├── convert_sqlite3.py
 ```
 - 2. 在这个目录下打开命令行
 - 3. 输入`python convert_sqlite3.py`即可
