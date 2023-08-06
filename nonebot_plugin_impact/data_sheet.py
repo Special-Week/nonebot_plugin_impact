@@ -116,7 +116,10 @@ def set_jj_length(userid: int, length: float) -> None:
 def check_group_allow(groupid: int) -> bool:
     """检查群是否允许, 传入群号, 类型是int"""
     with session() as s:
-        return bool(s.query(GroupData).filter(GroupData.groupid == groupid).first())
+        if s.query(GroupData).filter(GroupData.groupid == groupid).first():
+            return s.query(GroupData).filter(GroupData.groupid == groupid).first().allow  # type: ignore
+        else:
+            return False
 
 
 def set_group_allow(groupid: int, allow: bool) -> None:
