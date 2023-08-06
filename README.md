@@ -26,7 +26,7 @@ on_command("淫趴介绍", priority=20, block=True)
 
 ### 安装方法:
 
-    nb plugin install nonebot-plugin-impact    (推荐: 安装忌用)
+    nb plugin install nonebot-plugin-impact    (推荐: 安装即用)
 
     pip install nonebot-plugin-impact   (需要自己加载插件)
 
