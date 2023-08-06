@@ -14,26 +14,35 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import sessionmaker
 
-engine: Engine = create_engine("sqlite:///userdata.db")
+engine: Engine = create_engine("sqlite:///impact.db")
 session = sessionmaker(engine)
 Base = orm.declarative_base()
 
 
 class UserData(Base):
+    """用户数据表"""
+
     __tablename__: str = "userdata"
+
     userid = Column(Integer, primary_key=True, index=True)
-    username = Column(String, nullable=True)
-    injection_volume = Column(Float, nullable=False)
+    jj_length = Column(Float, nullable=False)
+    last_masturbation_time = Column(Integer, nullable=False, default=0)
 
 
 class GroupData(Base):
+    """群数据表"""
+
     __tablename__: str = "groupdata"
+
     groupid = Column(Integer, primary_key=True, index=True)
     allow = Column(Boolean, nullable=False)
 
 
 class EjaculationData(Base):
+    """被注入数据表"""
+
     __tablename__: str = "ejaculation_data"
+
     id = Column(Integer, primary_key=True)
     userid = Column(Integer, nullable=False, index=True)
     date = Column(String(20), nullable=False)
@@ -54,14 +63,10 @@ with open("ejaculation_data.json", "r", encoding="utf-8") as f:
 
 
 with session() as s:
-    for userid, injection_volume in userdata.items():
+    for userid, jj_length in userdata.items():
         if not s.query(UserData).filter(UserData.userid == userid).first():
             logger.info(f"插入用户 {userid}")
-            s.add(
-                UserData(
-                    userid=int(userid), username=None, injection_volume=injection_volume
-                )
-            )
+            s.add(UserData(userid=int(userid), jj_length=jj_length))
         else:
             logger.info(f"用户 {userid} 已存在, 跳过插入")
 
