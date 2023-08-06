@@ -20,19 +20,29 @@ Base = orm.declarative_base()
 
 
 class UserData(Base):
+    """用户数据表"""
+
     __tablename__: str = "userdata"
+
     userid = Column(Integer, primary_key=True, index=True)
     jj_length = Column(Float, nullable=False)
+    last_masturbation_time = Column(Integer, nullable=False, default=0)
 
 
 class GroupData(Base):
+    """群数据表"""
+
     __tablename__: str = "groupdata"
+
     groupid = Column(Integer, primary_key=True, index=True)
     allow = Column(Boolean, nullable=False)
 
 
 class EjaculationData(Base):
+    """被注入数据表"""
+
     __tablename__: str = "ejaculation_data"
+
     id = Column(Integer, primary_key=True)
     userid = Column(Integer, nullable=False, index=True)
     date = Column(String(20), nullable=False)
