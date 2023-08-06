@@ -1,6 +1,6 @@
 [project]
 name = "nonebot_plugin_impact"
-version = "0.07.114514" 
+version = "0.08.114514" 
 description = "让群友们眼前一黑的nonebot2淫趴插件"
 authors = [
     {name = "Special-Week", email = "HuaMing27499@gmail.com"},
