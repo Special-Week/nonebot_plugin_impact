@@ -24,6 +24,18 @@ on_command("注入查询", aliases={"摄入查询", "射入查询"}, priority=20
 on_command("淫趴介绍", priority=20, block=True)
 ```
 
+### 安装方法:
+
+    nb plugin install nonebot-plugin-impact    (推荐: 安装忌用)
+
+    pip install nonebot-plugin-impact   (需要自己加载插件)
+
+    git clone https://github.com/Special-Week/nonebot_plugin_impact.git   (需要自己安装依赖和加载插件)
+
+    download zip  (需要自己安装依赖和加载插件)
+
+
+
 ### 注意:
 
     有bug火速提, 有自己的想法自己写
