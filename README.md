@@ -49,11 +49,12 @@ on_command("淫趴介绍", priority=20, block=True)
 指令9: 淫趴介绍  (输出淫趴插件的命令列表)
 
 ### env配置项:
-| config     | type | default | example           | usage      |
-| ---------- | ---- | ------- | ----------------- | ---------- |
-| djCDtime   | int  | 300     | djCDtime = 300    | 打胶的CD   |
-| pkCDTime   | int  | 60      | pkCDTime = 60     | pk的CD     |
-| suoCDTime  | int  | 300     | suoCDTime = 300   | 嗦牛子的CD |
-| fuckCDTime | int  | 3600    | fuckCDTime = 3600 | 透群友的CD |
+| config       | type | default | example              | usage      |
+| ------------ | ---- | ------- | -------------------- | ---------- |
+| djCDtime     | int  | 300     | djCDtime = 300       | 打胶的CD   |
+| pkCDTime     | int  | 60      | pkCDTime = 60        | pk的CD     |
+| suoCDTime    | int  | 300     | suoCDTime = 300      | 嗦牛子的CD |
+| fuckCDTime   | int  | 3600    | fuckCDTime = 3600    | 透群友的CD |
+| isalive      | bool | False   | isalive = True       | 不活跃惩罚 |
 
-以上配置项单位均为秒, 大小写不敏感(反正env里面拿到dict都是小写的key)
+以上配置项单位为秒或bool值, 大小写不敏感(反正env里面拿到dict都是小写的key)

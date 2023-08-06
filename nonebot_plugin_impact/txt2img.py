@@ -1,7 +1,8 @@
+"""一个工具类, 将文本转换为图片, 根据文本长度自动换行"""
 from io import BytesIO
+from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
-from pathlib import Path
 
 
 class TxtToImg:

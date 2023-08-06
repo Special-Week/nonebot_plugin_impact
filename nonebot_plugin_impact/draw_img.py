@@ -1,3 +1,4 @@
+"""绘画图表模块"""
 import random
 from io import BytesIO
 from pathlib import Path
@@ -24,6 +25,7 @@ class DrawBarChart:
         self.font = str(self.module_path / "fonts" / "SIMYOU.TTF")
 
     async def draw_bar_chart(self, data: Dict[str, float]) -> bytes:
+        """画柱状图, 传入一个字典, key是str类型的用户名字, value是对应用户的注入量"""
         values = list(data.values())
         keys = list(data.keys())
         image = Image.new("RGBA", (1920, 1080), (255, 255, 255, 255))
@@ -88,7 +90,6 @@ class DrawBarChart:
         random.shuffle(self.colors)
         for i, value in enumerate(values):
             color = self.colors[i]
-            # 在左边依次画出颜色的方块, 并且写上名字, 间隔20像素, 方块边长为50像素
             draw.rectangle((50, 50 + 70 * i, 100, 100 + 70 * i), fill=color + (250,))
             draw.text(
                 (120, 60 + 70 * i),
@@ -106,12 +107,11 @@ class DrawBarChart:
                     ),
                     fill=color + (200,),
                 )
-                # 在柱子上方写上值, 居中
                 draw.text(
                     (540 + 120 * i, 770 - 78 * (value / maxnum_scale) - 30),
                     str(value),
                     fill="black",
-                    font=ImageFont.truetype(self.font, 32),
+                    font=ImageFont.truetype(self.font, 26),
                 )
             else:
                 draw.rectangle(
@@ -123,12 +123,11 @@ class DrawBarChart:
                     ),
                     fill=color + (200,),
                 )
-                # 在柱子下方写上值, 居中
                 draw.text(
                     (540 + 120 * i, 770 - 78 * (value / minnum_scale) + 10),
                     str(value),
                     fill="black",
-                    font=ImageFont.truetype(self.font, 32),
+                    font=ImageFont.truetype(self.font, 26),
                 )
 
         # ------------------------ 粘贴上来 ------------------------
@@ -137,8 +136,9 @@ class DrawBarChart:
         image.save(img_byte, format="PNG")
         return img_byte.getvalue()
 
+
     async def draw_line_chart(self, data: Dict[str, float]):
-        # 画折线图
+        """画折线图, 传入一个字典, key是str类型的用户名字, value是对应用户的注入量"""
         values = list(data.values())
         keys = list(data.keys())
         image = Image.new("RGBA", (1920, 1080), (255, 255, 255, 255))
@@ -203,14 +203,12 @@ class DrawBarChart:
                 y_new = 1000 - 95 * (values[i] / maxnum_scale)
                 draw.line((x, y, x_new, y_new), fill="black", width=2)
                 x, y = x_new, y_new
-                # 给每个点画个圆圈
                 draw.ellipse((x - 5, y - 5, x + 5, y + 5), fill="black", width=2)
-                # 在每个点上写上值
                 draw.text(
                     (x - 20, y - 30),
                     str(values[i]),
                     fill="black",
-                    font=ImageFont.truetype(self.font, 32),
+                    font=ImageFont.truetype(self.font, 26),
                 )
 
         draw_line_chart()
