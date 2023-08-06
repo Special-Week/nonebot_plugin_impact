@@ -83,6 +83,7 @@ def add_new_user(userid: int) -> None:
 
 def update_activity(userid: int) -> None:
     """更新用户活跃时间"""
+    # 如果用户不在表中, 则插入一条记录
     if not is_in_table(userid):
         add_new_user(userid)
     with session() as s:
@@ -101,6 +102,7 @@ def get_jj_length(userid: int) -> float:
 def set_jj_length(userid: int, length: float) -> None:
     """传入一个用户id以及需要增加的长度, 在数据库内累加, 用这个函数前一定要先判断用户是否在表中"""
     with session() as s:
+        # 先获取当前的长度, 然后再累加
         current_length = s.query(UserData).filter(UserData.userid == userid).first().jj_length  # type: ignore
         s.query(UserData).filter(UserData.userid == userid).update(
             {

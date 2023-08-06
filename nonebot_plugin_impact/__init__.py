@@ -1,3 +1,4 @@
+"""插件入口"""
 import contextlib
 from re import I
 
