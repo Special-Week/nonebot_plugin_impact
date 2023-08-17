@@ -214,6 +214,7 @@ class DrawBarChart:
         draw_line_chart()
         if len(values) > 18:
             keys = keys[:9] + keys[-9:]
+            values = values[:9] + values[-9:]
         position = 0
         for i in range(len(values)):
             position += 50
