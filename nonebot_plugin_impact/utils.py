@@ -102,11 +102,6 @@ class Utils:
         rand_num = random.uniform(0, 1) if rand_num > 0.1 else random.uniform(1, 2)
         return round(rand_num, 3)
 
-    @staticmethod
-    async def get_user_card(event: GroupMessageEvent) -> Union[None, str]:
-        """返还用户nickname"""
-        sender = event.sender
-        return sender.card or sender.nickname
 
     async def plugin_usage(self) -> bytes:
         return await txt_to_img.txt_to_img(self.usage)

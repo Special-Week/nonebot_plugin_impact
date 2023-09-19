@@ -243,7 +243,7 @@ class Impart:
                 at_sender=True,
             )
         utils.ejaculation_cd.update({str(uid): time.time()})  # 记录时间
-        req_user_card = str(await utils.get_user_card(event))
+        req_user_card: str = str(event.sender.card or event.sender.nickname)
         prep_list = await bot.get_group_member_list(group_id=gid)
         return uid, req_user_card, args[0], prep_list
 
@@ -273,7 +273,7 @@ class Impart:
         matcher: Matcher,
     ) -> str:
         lucky_user: str = next(
-            (prep["user_id"] for prep in prep_list if prep["role"] == "owner"),
+            ((prep["user_id"]) for prep in prep_list if prep["role"] == "owner"),
             str(uid),
         )
         if int(lucky_user) == uid:  # 如果群主是自己
@@ -338,8 +338,14 @@ class Impart:
             matcher=matcher,
             event=event,
         )
-        # 获取群名片或者网名
-        lucky_user_card = str(await utils.get_user_card(event))
+        lucky_user_card = next(
+            (
+                prep["card"] or prep["nickname"]
+                for prep in prep_list
+                if prep["user_id"] == int(lucky_user)
+            ),
+            "群友",
+        )
         # 1--100的随机数， 保留三位
         ejaculation = round(random.uniform(1, 100), 3)
         insert_ejaculation(int(lucky_user), ejaculation)
