@@ -103,7 +103,9 @@ def set_jj_length(userid: int, length: float) -> None:
     """传入一个用户id以及需要增加的长度, 在数据库内累加, 用这个函数前一定要先判断用户是否在表中"""
     with session() as s:
         # 先获取当前的长度, 然后再累加
-        current_length = s.query(UserData).filter(UserData.userid == userid).first().jj_length  # type: ignore
+        current_length = (
+            s.query(UserData).filter(UserData.userid == userid).first().jj_length
+        )  # type: ignore
         s.query(UserData).filter(UserData.userid == userid).update(
             {
                 UserData.jj_length: round(current_length + length, 3),
@@ -158,7 +160,14 @@ def insert_ejaculation(userid: int, volume: float) -> None:
             .first()
         ):
             # 当前的值
-            current_volume = s.query(EjaculationData).filter(EjaculationData.userid == userid, EjaculationData.date == now_date).first().volume  # type: ignore
+            current_volume = (
+                s.query(EjaculationData)
+                .filter(
+                    EjaculationData.userid == userid, EjaculationData.date == now_date
+                )
+                .first()
+                .volume
+            )  # type: ignore
             s.query(EjaculationData).filter(
                 EjaculationData.userid == userid, EjaculationData.date == now_date
             ).update({EjaculationData.volume: round(current_volume + volume, 3)})
@@ -188,7 +197,15 @@ def get_today_ejaculation_data(userid: int) -> float:
             )
             .first()
         ):
-            return s.query(EjaculationData).filter(EjaculationData.userid == userid, EjaculationData.date == get_today()).first().volume  # type: ignore
+            return (
+                s.query(EjaculationData)
+                .filter(
+                    EjaculationData.userid == userid,
+                    EjaculationData.date == get_today(),
+                )
+                .first()
+                .volume
+            )  # type: ignore
         # 否则返回0
         else:
             return 0.0
