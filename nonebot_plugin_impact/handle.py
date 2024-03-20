@@ -3,6 +3,7 @@ import asyncio
 import random
 import time
 from random import choice
+from httpx import AsyncClient
 from typing import Dict, List, Tuple
 
 from nonebot import get_driver
@@ -29,7 +30,9 @@ from .utils import utils
 
 
 class Impart:
-    penalties_impact: bool = getattr(get_driver().config, "isalive", False)  # 重置每日活跃度
+    penalties_impact: bool = getattr(
+        get_driver().config, "isalive", False
+    )  # 重置每日活跃度
 
     @staticmethod
     def penalties_and_resets() -> None:
@@ -54,7 +57,9 @@ class Impart:
         if at == uid:  # 如果at的id和uid相同, 则返回
             await matcher.finish("你不能pk自己喵", at_sender=True)
         # rule规定了必须有at, 所以不用判断at是否为寄
-        if is_in_table(userid=int(uid)) and is_in_table(int(at)):  # 如果两个都在userdata里面
+        if is_in_table(userid=int(uid)) and is_in_table(
+            int(at)
+        ):  # 如果两个都在userdata里面
             random_num = random.random()  # 生成一个随机数
             # 如果random_num大于0.5, 则胜利, 否则失败
             if random_num > 0.5:
@@ -208,16 +213,14 @@ class Impart:
                 at_sender=True,
             )
         # top5和end5的信息，然后获取其网名
-        top5info = [
-            await bot.get_stranger_info(user_id=name["userid"]) for name in top5
-        ]
-        last5info = [
-            await bot.get_stranger_info(user_id=name["userid"]) for name in last5
-        ]
-
-        top5names = [name["nickname"] for name in top5info]
-        last5names = [name["nickname"] for name in last5info]
-
+        async with AsyncClient() as client:
+            top5names = await asyncio.gather(
+                *[utils.get_stranger_info(client, name["userid"]) for name in top5]
+            )
+            last5names = await asyncio.gather(
+                *[utils.get_stranger_info(client, name["userid"]) for name in last5]
+            )
+            
         data = {top5names[i]: top5[i]["jj_length"] for i in range(len(top5))}
         for i in range(len(last5)):
             data[last5names[i]] = last5[i]["jj_length"]
@@ -260,7 +263,9 @@ class Impart:
             # 随机抽取幸运成员
             prep_list.remove(event.user_id)
             lucky_user = choice(prep_list)
-            await matcher.send(f"现在咱将随机抽取一位幸运群友\n送给{req_user_card}色色！")
+            await matcher.send(
+                f"现在咱将随机抽取一位幸运群友\n送给{req_user_card}色色！"
+            )
         else:  # 有的话lucky user就是at的人
             lucky_user = target
         return lucky_user

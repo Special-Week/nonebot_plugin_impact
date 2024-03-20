@@ -1,9 +1,9 @@
 """放一点工具函数"""
 import random
 import time
-from typing import Union
 
 import nonebot
+from httpx import AsyncClient
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
 from .txt2img import txt_to_img
@@ -102,9 +102,16 @@ class Utils:
         rand_num = random.uniform(0, 1) if rand_num > 0.1 else random.uniform(1, 2)
         return round(rand_num, 3)
 
-
     async def plugin_usage(self) -> bytes:
         return await txt_to_img.txt_to_img(self.usage)
+
+    @staticmethod
+    async def get_stranger_info(client: AsyncClient, uid: int) -> str:
+        try:
+            resp = (await client.get(f"https://api.usuuu.com/qq/{uid}")).json()
+            return resp["data"]["name"]
+        except Exception:
+            return "获取用户id失败"
 
 
 utils = Utils()
