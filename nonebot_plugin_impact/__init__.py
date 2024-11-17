@@ -1,4 +1,5 @@
 """插件入口"""
+
 import contextlib
 from re import I
 
@@ -13,7 +14,7 @@ require("nonebot_plugin_apscheduler")
 
 from nonebot_plugin_apscheduler import scheduler
 
-scheduler.add_job(impart.penalties_and_resets, "cron", hour = 0, misfire_grace_time = 600)
+scheduler.add_job(impart.penalties_and_resets, "cron", hour=0, misfire_grace_time=600)
 
 on_command(
     "pk",
@@ -24,26 +25,11 @@ on_command(
     handlers=[impart.pk],
 )
 
-on_regex(
-    "^(打胶|开导)$", 
-    priority=20, 
-    block=True, 
-    handlers=[impart.dajiao]
-)
+on_regex("^(打胶|开导)$", priority=20, block=True, handlers=[impart.dajiao])
 
-on_command(
-    "嗦牛子", 
-    priority=20, 
-    block=True, 
-    handlers=[impart.suo]
-)
+on_command("嗦牛子", priority=20, block=True, handlers=[impart.suo])
 
-on_command(
-    "查询", 
-    priority=20, 
-    block=False, 
-    handlers=[impart.queryjj]
-)
+on_command("查询", priority=20, block=False, handlers=[impart.queryjj])
 
 on_command(
     "jj排行榜",
@@ -77,12 +63,7 @@ on_command(
     handlers=[impart.query_injection],
 )
 
-on_command(
-    "淫趴介绍", 
-    priority=20, 
-    block=True,
-    handlers=[impart.yinpa_introduce]
-)
+on_command("淫趴介绍", priority=20, block=True, handlers=[impart.yinpa_introduce])
 
 with contextlib.suppress(Exception):
     from nonebot.plugin import PluginMetadata
@@ -99,5 +80,4 @@ with contextlib.suppress(Exception):
             "version": "0.12.114514",
             "priority": 20,
         },
-        
     )

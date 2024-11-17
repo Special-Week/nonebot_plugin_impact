@@ -1,11 +1,11 @@
 """matcher的handle模块"""
+
 import asyncio
 import random
 import time
 from random import choice
 from typing import Dict, List, Tuple
 
-from httpx import AsyncClient
 from nonebot import get_driver
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment
 from nonebot.matcher import Matcher
@@ -213,13 +213,12 @@ class Impart:
                 at_sender=True,
             )
         # top5和end5的信息，然后获取其网名
-        async with AsyncClient() as client:
-            top5names = await asyncio.gather(
-                *[utils.get_stranger_info(client, name["userid"]) for name in top5]
-            )
-            last5names = await asyncio.gather(
-                *[utils.get_stranger_info(client, name["userid"]) for name in last5]
-            )
+        top5names = await asyncio.gather(
+            *[utils.get_stranger_info(bot, name["userid"]) for name in top5]
+        )
+        last5names = await asyncio.gather(
+            *[utils.get_stranger_info(bot, name["userid"]) for name in last5]
+        )
 
         data = {top5names[i]: top5[i]["jj_length"] for i in range(len(top5))}
         for i in range(len(last5)):

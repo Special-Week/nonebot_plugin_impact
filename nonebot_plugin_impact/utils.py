@@ -3,8 +3,7 @@ import random
 import time
 
 import nonebot
-from httpx import AsyncClient
-from nonebot.adapters.onebot.v11 import GroupMessageEvent
+from nonebot.adapters.onebot.v11 import GroupMessageEvent,Bot
 
 from .txt2img import txt_to_img
 
@@ -106,10 +105,10 @@ class Utils:
         return await txt_to_img.txt_to_img(self.usage)
 
     @staticmethod
-    async def get_stranger_info(client: AsyncClient, uid: int) -> str:
+    async def get_stranger_info(bot: Bot, uid: int) -> str:
         try:
-            resp = (await client.get(f"https://api.usuuu.com/qq/{uid}")).json()
-            return resp["data"]["name"]
+            stranger_info = await bot.call_api("get_stranger_info", user_id=uid, no_cache=False)
+            return stranger_info["nickname"]
         except Exception:
             return "获取用户id失败"
 
